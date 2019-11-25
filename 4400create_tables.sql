@@ -1,0 +1,143 @@
+drop database team55;
+create database team55;
+use team55;
+
+CREATE TABLE User (
+	Username VARCHAR(50) NOT NULL UNIQUE,
+	Firstname VARCHAR(50) NOT NULL,
+	Lastname VARCHAR(50) NOT NULL,
+	Password VARCHAR(50) NOT NULL,
+	Status VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Username)
+);
+CREATE TABLE Employee (
+	Username VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Username),
+	FOREIGN KEY (Username)
+		REFERENCES User (Username)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+CREATE TABLE Admin (
+	Username VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Username),
+	FOREIGN KEY (Username)
+		REFERENCES User (Username)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+CREATE TABLE Company (
+	Name VARCHAR(50) NOT NULL UNIQUE,
+	PRIMARY KEY (Name)
+);
+CREATE TABLE Manager (
+	Username VARCHAR(50) NOT NULL,
+	MngStreet VARCHAR(50) NOT NULL,
+	MngCity VARCHAR(50) NOT NULL,
+	MngState VARCHAR(50) NOT NULL,
+	MngZipCode VARCHAR(50) NOT NULL,
+	CoName VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Username),
+	FOREIGN KEY (Username)
+		REFERENCES Employee (Username)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	FOREIGN KEY (CoName)
+		REFERENCES Company (Name)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+CREATE TABLE Customer (
+	Username VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Username),
+	FOREIGN KEY (Username)
+		REFERENCES User (Username)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+CREATE TABLE CreditCard (
+	CreditCardNum INT NOT NULL UNIQUE,
+	CUsername VARCHAR(50) NOT NULL,
+	PRIMARY KEY (CreditCardNum),
+	FOREIGN KEY (CUsername)
+		REFERENCES Customer (Username)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+CREATE TABLE Theater (
+	Name VARCHAR(50) NOT NULL UNIQUE,
+	CompanyName VARCHAR(50) NOT NULL,
+	ThtrStreet VARCHAR(50) NOT NULL,
+	ThtrCity VARCHAR(50) NOT NULL,
+	ThtrState VARCHAR(50) NOT NULL,
+	ThtrZipcode VARCHAR(50) NOT NULL,
+	Capacity INT NOT NULL,
+	MngUsername VARCHAR(50) NOT NULL,
+	PRIMARY KEY (Name, CompanyName),
+	FOREIGN KEY (CompanyName)
+		REFERENCES Company (Name)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	FOREIGN KEY (MngUsername)
+		REFERENCES Manager (Username)
+ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+CREATE TABLE Movie (
+	Name VARCHAR(50) NOT NULL UNIQUE,
+	ReleaseDate DATE NOT NULL UNIQUE,
+	Duration INT NOT NULL,
+	PRIMARY KEY (Name, ReleaseDate)
+);
+CREATE TABLE MoviePlay (
+	PlayDate DATE NOT NULL UNIQUE,
+	MovieName VARCHAR(50) NOT NULL,
+	MovieReleaseDate DATE NOT NULL,
+	TheaterName VARCHAR(50) NOT NULL,
+	CoName VARCHAR(50) NOT NULL,
+	PRIMARY KEY (PlayDate, MovieName, MovieReleaseDate,TheaterName,CoName),
+	FOREIGN KEY (MovieName,MovieReleaseDate)
+		REFERENCES Movie (Name,ReleaseDate)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	FOREIGN KEY (TheaterName, CoName)
+		REFERENCES Theater(Name, CompanyName)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+
+CREATE TABLE Visit (
+	ID VARCHAR(50) NOT NULL UNIQUE,
+	Date DATE NOT NULL,
+	Username VARCHAR(50) NOT NULL,
+	TheaterName VARCHAR(50) NOT NULL,
+	CoName VARCHAR(50) NOT NULL,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (Username)
+		REFERENCES User(Username)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	FOREIGN KEY (TheaterName, CoName)
+		REFERENCES Theater (Name, CompanyName)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+CREATE TABLE Used (
+	CCNum INT NOT NULL,
+	MoviePlayDate DATE NOT NULL,
+	MovieName VARCHAR(50) NOT NULL,
+	MovieReleaseDate DATE NOT NULL,
+	TheaterName VARCHAR(50) NOT NULL,
+	CoName VARCHAR(50) NOT NULL,
+	PRIMARY KEY (CCNum, MoviePlayDate, MovieName, MovieReleaseDate,TheaterName,CoName),
+	FOREIGN KEY (CCNum)
+		REFERENCES CreditCard (CreditCardNum)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE,
+	FOREIGN KEY (MoviePlayDate, MovieName, MovieReleaseDate,TheaterName,CoName)
+		REFERENCES MoviePlay (PlayDate, MovieName, MovieReleaseDate,TheaterName,CoName)
+			ON DELETE CASCADE
+			ON UPDATE CASCADE
+);
+
+
