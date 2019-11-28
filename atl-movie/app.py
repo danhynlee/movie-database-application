@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, LoginForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm
 
 
 app = Flask(__name__)
@@ -55,6 +55,14 @@ def registerManager():
         return redirect(url_for('home'))
     return render_template('manager_registration.html', title='Manager Registration', form=form)
 
+#s6 manager customer navigation
+@app.route('/manager_customer_registration')
+def registerManagerCustomer():
+    form = ManagerCustomerRegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for Manager-Customer {form.username.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('manager_customer_registration.html', title='Manager-Customer Registration', form=form)
 
 
 if  __name__ == '__main__':
