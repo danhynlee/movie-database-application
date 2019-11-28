@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect
-from forms import UserRegistrationForm, CustomerRegistrationForm, LoginForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, LoginForm
 
 
 app = Flask(__name__)
