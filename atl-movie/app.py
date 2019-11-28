@@ -12,9 +12,15 @@ def home():
     return render_template('index.html')
 
 # s1 login page
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    if form.validate_on_submit():
+        if form.username.data == 'danhynlee' and form.password.data == 'password':
+            flash(f'You have been logged in!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash(f'Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title='Atlanta Movie Login', form=form)
 
 # s2 register navigation
