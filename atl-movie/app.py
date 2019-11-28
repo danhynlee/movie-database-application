@@ -59,5 +59,16 @@ def registerCustomer():
         return redirect(url_for('home'))
     return render_template('customer_registration.html', title='Customer Registration', form=form)
 
+# s5 manager navigation
+@app.route('/manager_registration')
+def registerManager():
+    form = ManagerRegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for Manager {form.username.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('manager_registration.html', title='Manager Registration', form=form)
+
+
+
 if  __name__ == '__main__':
     app.run(debug=True)
