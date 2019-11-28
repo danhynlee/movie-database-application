@@ -4,6 +4,7 @@ from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistr
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = 'c2d4f765f01f6f0f4511e83d2f5469ac'
 
 @app.route('/')
 @app.route('/home')
