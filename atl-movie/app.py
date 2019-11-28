@@ -46,7 +46,7 @@ def registerNavigation():
 def registerUser():
     form = UserRegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
+        flash(f'Account created for User {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('user_registration.html', title='User Registration', form=form)
 
@@ -54,6 +54,9 @@ def registerUser():
 @app.route('/customer_registration')
 def registerCustomer():
     form = CustomerRegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for Customer {form.username.data}!', 'success')
+        return redirect(url_for('home'))
     return render_template('customer_registration.html', title='Customer Registration', form=form)
 
 if  __name__ == '__main__':
