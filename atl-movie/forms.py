@@ -25,7 +25,7 @@ class ManagerRegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
-    # company = SelectField('Company', valid)
+    company = SelectField('Company', choices = [('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     street_address = StringField('Street Address', validators=[DataRequired()])
