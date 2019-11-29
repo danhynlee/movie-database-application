@@ -14,7 +14,7 @@ CREATE TABLE Movie (
 );
 CREATE TABLE User (
 	username VARCHAR(50) NOT NULL UNIQUE,
-    status VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT("Pending"),
     password VARCHAR(200) NOT NULL,
 	firstname VARCHAR(50) NOT NULL,
 	lastname VARCHAR(50) NOT NULL,
