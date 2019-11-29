@@ -31,13 +31,13 @@ def login():
 
         cur = mysql.connection.cursor()
         
-        valid = cur.execute("SELECT username FROM user WHERE username = %s", [username])
+        valid = cur.execute("SELECT username FROM User WHERE username = %s", [username])
         if not valid:
             flash(f'Please enter a valid username.', 'danger')
             return redirect(url_for('login'))
         
         username = cur.fetchone()['username']
-        cur.execute("SELECT * FROM user WHERE username=%s", [username])
+        cur.execute("SELECT * FROM User WHERE username=%s", [username])
 
         if valid:
             password = cur.fetchone()['Password']
@@ -46,9 +46,9 @@ def login():
                 session['logged_in'] = True
                 session['username'] = username
 
-                validCustomer = cur.execute("SELECT * FROM customer WHERE username = %s", [username])
-                validManager = cur.execute("SELECT * FROM manager WHERE username = %s", [username])
-                validAdmin = cur.execute("SELECT * FROM admin WHERE username = %s", [username])
+                validCustomer = cur.execute("SELECT * FROM Customer WHERE username = %s", [username])
+                validManager = cur.execute("SELECT * FROM Manager WHERE username = %s", [username])
+                validAdmin = cur.execute("SELECT * FROM Admin WHERE username = %s", [username])
 
                 if validCustomer and validManger:
                     session['userType'] = "Manager-Customer"
@@ -62,10 +62,10 @@ def login():
                     session['userType'] = 'User'
                 
                 if session['userType'] == 'Manager-Customer' or session['userType'] == 'Customer':
-                    cur.execute("SELECT * FROM creditcard WHERE username=%s", [username])
+                    cur.execute("SELECT * FROM CustomerCreditCard WHERE username=%s", [username])
                 
                     userCC = cur.fetchall()
-                    session['creditcards'] = [dictCC['CreditCardnum'] for dictCC in userCC]
+                    session['creditcards'] = [dictCC['creditCardNum'] for dictCC in userCC]
                 else:
                     session['creditcards'] = None
                 
@@ -99,13 +99,13 @@ def registerUser():
         cur = mysql.connection.cursor()
 
         # checks for duplicate username
-        cur.execute("SELECT username FROM user")
+        cur.execute("SELECT username FROM User")
         usernames = cur.fetchall()
         if username in [dictUser['username'] for dictUser in usernames]:
             flash(f"Username already exists. Please try again.", 'danger')
             return render_template('user_registration.html', title='User Registration', form=form)
 
-        cur.execute("INSERT INTO user(Username, Firstname, Lastname, Password, Status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
+        cur.execute("INSERT INTO User(username, status, password, firstname, lastname) VALUES(%s, %s, %s, %s, %s)", (username, status, password, firstname, lastname))
 
         mysql.connection.commit()
 
@@ -129,21 +129,21 @@ def registerCustomer():
 
         cur = mysql.connection.cursor()
 
-        cur.execute("SELECT username FROM user")
+        cur.execute("SELECT username FROM User")
         usernames = cur.fetchall()
         if username in [dictUser['username'] for dictUser in usernames]:
             flash(f"Username already exists. Please try again.", 'danger')
             return render_template('customer_registration.html', title='Customer Registration', form=form)
         
-        cur.execute("SELECT CreditCardnum FROM creditcard")
+        cur.execute("SELECT creditCardNum FROM CustomerCreditCard")
         ccNums = cur.fetchall()
-        if credit_card in [dictCC['CreditCardnum'] for dictCC in ccNums]:
+        if credit_card in [dictCC['creditCardNum'] for dictCC in ccNums]:
             flash(f'Credit Card number already exists. Please enter another one.', 'danger')
             return render_template('customer_registration.html', title="Customer Registration", form=form)
         
-        cur.execute("INSERT INTO user(Username, Firstname, Lastname, Password, Status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
-        cur.execute("INSERT INTO customer(Username) VALUES(%s)", (username,))
-        cur.execute("INSERT INTO creditcard(CreditCardnum, CUsername) VALUES(%s, %s)", (credit_card, username))
+        cur.execute("INSERT INTO User(username, status, password, firstname, lastname) VALUES(%s, %s, %s, %s, %s)", (username, status, password, firstname, lastname))
+        cur.execute("INSERT INTO Customer(username) VALUES(%s)", (username,))
+        cur.execute("INSERT INTO CustomerCreditCard(creditCardNum, username) VALUES(%s, %s)", (credit_card, username))
 
         mysql.connection.commit()
 
