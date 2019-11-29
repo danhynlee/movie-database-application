@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, flash, redirect
+from flask import Flask, render_template, url_for, flash, redirect, request, session
 from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
@@ -25,12 +25,59 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        if form.username.data == 'danhynlee' and form.password.data == 'password':
-            flash(f'You have been logged in!', 'success')
-            return redirect(url_for('home'))
+    if form.validate_on_submit() and request.method == 'POST':
+        username = form.username.data
+        password_check = form.password.data
+
+        cur = mysql.connection.cursor()
+        
+        valid = cur.execute("SELECT username FROM user WHERE username = %s", [username])
+        if not valid:
+            flash(f'Please enter a valid username.', 'danger')
+            return redirect(url_for('login'))
+        
+        username = cur.fetchone()['username']
+        cur.execute("SELECT * FROM user WHERE username=%s", [username])
+
+        if valid:
+            password = cur.fetchone()['Password']
+
+            if bcrypt.check_password_hash(password, password_check):
+                session['logged_in'] = True
+                session['username'] = username
+
+                validCustomer = cur.execute("SELECT * FROM customer WHERE username = %s", [username])
+                validManager = cur.execute("SELECT * FROM manager WHERE username = %s", [username])
+                validAdmin = cur.execute("SELECT * FROM admin WHERE username = %s", [username])
+
+                if validCustomer and validManger:
+                    session['userType'] = "Manager-Customer"
+                elif validManager:
+                    session['userType'] = "Manager"
+                elif validCustomer:
+                    session['userType'] = "Customer"
+                elif validAdmin:
+                    session['userType'] = "Admin"
+                else:
+                    session['userType'] = 'User'
+                
+                if session['userType'] == 'Manager-Customer' or session['userType'] == 'Customer':
+                    cur.execute("SELECT * FROM creditcard WHERE username=%s", [username])
+                
+                    userCC = cur.fetchall()
+                    session['creditcards'] = [dictCC['CreditCardnum'] for dictCC in userCC]
+                else:
+                    session['creditcards'] = None
+                
+                flash(f'You have been logged in.', 'success')
+                return redirect(url_for('home', creditcards=session['creditcards'], userType=session['userType'], username=session['username']))
+            else:
+                flash(f'Invalid login', 'danger')
+                return render_template('login.html', title='Atlanta Movie Login', form=form)
+            
+            cur.close()
         else:
-            flash(f'Login Unsuccessful. Please check username and password', 'danger')
+            flash(f'Username does not exist.', 'danger')
     return render_template('login.html', title='Atlanta Movie Login', form=form)
 
 # s2 register navigation
