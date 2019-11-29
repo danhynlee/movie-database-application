@@ -50,7 +50,7 @@ def login():
                 validManager = cur.execute("SELECT * FROM Manager WHERE username = %s", [username])
                 validAdmin = cur.execute("SELECT * FROM Admin WHERE username = %s", [username])
 
-                if validCustomer and validManger:
+                if validCustomer and validManager:
                     session['userType'] = "Manager-Customer"
                 elif validManager:
                     session['userType'] = "Manager"
