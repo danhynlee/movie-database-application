@@ -19,13 +19,13 @@
 -- Table structure for table `company`
 --
 
-DROP TABLE IF EXISTS `company`;
+DROP TABLE IF EXISTS `Company`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `company` (
-  `Name` varchar(50) NOT NULL,
-  PRIMARY KEY (`Name`),
-  UNIQUE KEY `Name` (`Name`)
+CREATE TABLE `Company` (
+  `comName` varchar(50) NOT NULL,
+  PRIMARY KEY (`comName`),
+  UNIQUE KEY `comName` (`comName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -33,10 +33,10 @@ CREATE TABLE `company` (
 -- Dumping data for table `company`
 --
 
-LOCK TABLES `company` WRITE;
-/*!40000 ALTER TABLE `company` DISABLE KEYS */;
-INSERT INTO `company` VALUES ('4400 Theater Company'),('AI Theater Company'),('Awesome Theater Company'),('EZ Theater Company');
-/*!40000 ALTER TABLE `company` ENABLE KEYS */;
+LOCK TABLES `Company` WRITE;
+/*!40000 ALTER TABLE `Company` DISABLE KEYS */;
+INSERT INTO `Company` VALUES ('4400 Theater Company'),('AI Theater Company'),('Awesome Theater Company'),('EZ Theater Company');
+/*!40000 ALTER TABLE `Company` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

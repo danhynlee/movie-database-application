@@ -16,35 +16,35 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `visit`
+-- Table structure for table `VisitUserTheater`
 --
 
-DROP TABLE IF EXISTS `visit`;
+DROP TABLE IF EXISTS `VisitUserTheater`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `visit` (
-  `ID` varchar(50) NOT NULL,
-  `Date` date NOT NULL,
-  `Username` varchar(50) NOT NULL,
-  `TheaterName` varchar(50) NOT NULL,
-  `CoName` varchar(50) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `ID` (`ID`),
-  KEY `Username` (`Username`),
-  KEY `TheaterName` (`TheaterName`,`CoName`),
-  CONSTRAINT `visit_ibfk_1` FOREIGN KEY (`Username`) REFERENCES `user` (`Username`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `visit_ibfk_2` FOREIGN KEY (`TheaterName`, `CoName`) REFERENCES `theater` (`Name`, `CompanyName`) ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE `VisitUserTheater` (
+  `visitID` varchar(50) NOT NULL,
+  `visitDate` date NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `thName` varchar(50) NOT NULL,
+  `comName` varchar(50) NOT NULL,
+  PRIMARY KEY (`visitID`),
+  UNIQUE KEY `visitID` (`visitID`),
+  KEY `username` (`username`),
+  KEY `thName` (`thName`,`comName`),
+  CONSTRAINT `visit_ibfk_1` FOREIGN KEY (`username`) REFERENCES `User` (`username`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `visit_ibfk_2` FOREIGN KEY (`thName`, `comName`) REFERENCES `Theater` (`thName`, `comName`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `visit`
+-- Dumping data for table `VisitUserTheater`
 --
 
-LOCK TABLES `visit` WRITE;
-/*!40000 ALTER TABLE `visit` DISABLE KEYS */;
-INSERT INTO `visit` VALUES ('1','2010-03-22','georgep','Main Movies','EZ Theater Company'),('2','2010-03-22','calcwizard','Main Movies','EZ Theater Company'),('3','2010-03-25','calcwizard','Star Movies','EZ Theater Company'),('4','2010-03-25','imready','Star Movies','EZ Theater Company'),('5','2010-03-20','calcwizard','ML Movies','AI Theater Company');
-/*!40000 ALTER TABLE `visit` ENABLE KEYS */;
+LOCK TABLES `VisitUserTheater` WRITE;
+/*!40000 ALTER TABLE `VisitUserTheater` DISABLE KEYS */;
+INSERT INTO `VisitUserTheater` VALUES ('1','2010-03-22','georgep','Main Movies','EZ Theater Company'),('2','2010-03-22','calcwizard','Main Movies','EZ Theater Company'),('3','2010-03-25','calcwizard','Star Movies','EZ Theater Company'),('4','2010-03-25','imready','Star Movies','EZ Theater Company'),('5','2010-03-20','calcwizard','ML Movies','AI Theater Company');
+/*!40000 ALTER TABLE `VisitUserTheater` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
