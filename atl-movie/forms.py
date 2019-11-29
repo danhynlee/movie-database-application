@@ -12,16 +12,13 @@ class UserRegistrationForm(FlaskForm):
     submit = SubmitField('Register')
     back = SubmitField('Back')
 
-class CreditCardForm(FlaskForm):
-    credit_card_num = StringField('Credit Card #', validators=[DataRequired(), Length(min=16,max=16)])
-
 class CustomerRegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    credit_cards = FieldList(FormField(CreditCardForm))
+    credit_card = StringField('Credit Card', validators=[DataRequired(), Length(min=16,max=16, message="Credit Card number must be 16 digits.")])
     submit = SubmitField('Register')
 
 class ManagerRegistrationForm(FlaskForm):
@@ -47,7 +44,7 @@ class ManagerCustomerRegistrationForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
     company = SelectField('Company', choices = [('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired(), EqualTo('password')])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     street_address = StringField('Street Address', validators=[DataRequired()])
     city = StringField('City', validators=[DataRequired()])
@@ -58,9 +55,8 @@ class ManagerCustomerRegistrationForm(FlaskForm):
                 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'Other')
     state = SelectField('State', choices=[(state, state) for state in STATES])
     zipcode = StringField('Zipcode', validators=[DataRequired(), Length(min=5, max=5, message="Zipcode must be 5 digits.")])
-    credit_cards = FieldList(FormField(CreditCardForm))
+    credit_card = StringField('Credit Card', validators=[DataRequired(), Length(min=16,max=16, message="Credit Card number must be 16 digits.")])
     submit = SubmitField('Register')
-
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
