@@ -289,17 +289,17 @@ def dashboard():
     
     return render_template('dashboard.html', title='Dashboard', form=form, creditCards=creditCards, userType=request.args.get('userType'))
 
-@app.route('/remove_cc/<credit_card>', methods=['GET', 'POST'])
+@app.route('/remove_cc/<string:credit_card>', methods=['GET', 'POST'])
 def remove_cc(credit_card):
     username = request.args['username']
 
     cur = mysql.connection.cursor()
 
     cur.execute("SELECT COUNT(*) FROM CustomerCreditCard WHERE username=%s", (username,))
-    credit_cards = cur.fetchone()
-    cc_count = credit_cards['COUNT(*)']
+    creditcards = cur.fetchone()
+    cc_count = creditcards['COUNT(*)']
     if cc_count == 1:
-        flash('You must have at least one email', 'danger')
+        flash('You must have at least one credit card.', 'danger')
         return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
 
     cur.execute("DELETE FROM CustomerCreditCard WHERE creditCardNum=%s", (credit_card,))
