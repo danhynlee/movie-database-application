@@ -52,6 +52,8 @@ def login():
 
                 if validCustomer and validManager:
                     session['userType'] = "Manager-Customer"
+                elif validCustomer and validAdmin:
+                    session['userType'] = "Admin-Customer"
                 elif validManager:
                     session['userType'] = "Manager"
                 elif validCustomer:
@@ -61,7 +63,7 @@ def login():
                 else:
                     session['userType'] = 'User'
                 
-                if session['userType'] == 'Manager-Customer' or session['userType'] == 'Customer':
+                if session['userType'] == 'Manager-Customer' or session['userType'] == 'Admin-Customer' or session['userType'] == 'Customer':
                     cur.execute("SELECT * FROM CustomerCreditCard WHERE username=%s", [username])
                 
                     userCC = cur.fetchall()
