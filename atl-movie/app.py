@@ -154,10 +154,37 @@ def registerCustomer():
     return render_template('customer_registration.html', title='Customer Registration', form=form)
 
 # s5 manager navigation
-@app.route('/manager_registration')
+@app.route('/manager_registration', methods=['GET', 'POST'])
 def registerManager():
     form = ManagerRegistrationForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and request.method == 'POST':
+        username = form.username.data
+        firstname = form.firstname.data
+        lastname = form.lastname.data
+        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        company = form.company.data
+        street_address = form.street_address.data
+        city = form.city.data
+        state = form.state.data
+        zipcode = form.zipcode.data
+        status = 'Pending'
+
+        cur = mysql.connection.cursor()
+
+        cur.execute("SELECT username FROM User")
+        usernames = cur.fetchall()
+        if username in [dictUser['username'] for dictUser in usernames]:
+            flash(f"Username already exists. Please try again.", 'danger')
+            return render_template('manager_registration.html', title='Manager Registration', form=form)
+        
+        cur.execute("INSERT INTO User(username, status, password, firstname, lastname) VALUES(%s, %s, %s, %s, %s)", (username, status, password, firstname, lastname))
+        cur.execute("INSERT INTO Employee(username) VALUES(%s)", (username,))
+        cur.execute("INSERT INTO Manager(username, comName, manStreet, manCity, manState, manZipcode) VALUES(%s, %s, %s, %s, %s, %s)", (username, company, street_address, city, state, zipcode))
+
+        mysql.connection.commit()
+
+        cur.close()
+
         flash(f'Account created for Manager {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('manager_registration.html', title='Manager Registration', form=form)
