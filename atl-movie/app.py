@@ -40,7 +40,7 @@ def login():
         cur.execute("SELECT * FROM User WHERE username=%s", [username])
 
         if valid:
-            password = cur.fetchone()['Password']
+            password = cur.fetchone()['password']
 
             if bcrypt.check_password_hash(password, password_check):
                 session['logged_in'] = True
@@ -141,7 +141,7 @@ def registerCustomer():
             flash(f'Credit Card number already exists. Please enter another one.', 'danger')
             return render_template('customer_registration.html', title="Customer Registration", form=form)
         
-        cur.execute("INSERT INTO User(username, status, password, firstname, lastname) VALUES(%s, %s, %s, %s, %s)", (username, status, password, firstname, lastname))
+        cur.execute("INSERT INTO User(username, firstname, lastname, password, status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
         cur.execute("INSERT INTO Customer(username) VALUES(%s)", (username,))
         cur.execute("INSERT INTO CustomerCreditCard(creditCardNum, username) VALUES(%s, %s)", (credit_card, username))
 
