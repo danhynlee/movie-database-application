@@ -2,10 +2,6 @@ drop database team55;
 create database team55;
 use team55;
 
-drop table CustomerViewMovie;
-drop table VisitUserTheater;
-drop table MoviePlay;
-
 CREATE TABLE Company (
 	comName VARCHAR(50) NOT NULL UNIQUE,
 	PRIMARY KEY (comName)
