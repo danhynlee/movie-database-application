@@ -87,19 +87,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
+                <div class="row">
+                    <div class="col-8">
                         <div class="form-group">
-                            {{ form.credit_cards.label(class="form-control-label") }}
-                            {% if form.credit_cards.errors %}
-                                {{ form.credit_cards(class="form-control form-control-lg is-invalid") }}
+                            {{ form.credit_card.label(class="form-control-label") }}
+                            {% if form.credit_card.errors %}
+                                {{ form.credit_card(class="form-control form-control-lg is-invalid") }}
                                 <div class="invalid-feedback">
-                                    {% for error in form.credit_cards.errors %}
+                                    {% for error in form.credit_card.errors %}
                                         <span>{{ error }}</span>
                                     {% endfor%}
                                 </div>
                             {% else %}
-                                {{ form.credit_cards(class="form-control form-control-lg") }}
+                                {{ form.credit_card(class="form-control form-control-lg") }}
                             {% endif %}
                         </div>
                     </div>
