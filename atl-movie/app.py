@@ -246,11 +246,11 @@ def registerManagerCustomer():
 #             return redirect(url_for('login'))
 #     return wrap
 
-# @app.route('/logout')
-# def logout():
-#     session.clear()
-#     flash(f'You are now logged out', 'success')
-#     return redirect(url_for('home'))
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You are now logged out', 'success')
+    return redirect(url_for('home'))
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 # @is_logged_in
