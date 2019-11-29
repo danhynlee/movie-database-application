@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="content-section">
+        <legend class="border-bottom mb-4">Dashboard</legend>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container pl-5">
+                        <h1 class="display-4">Welcome {{ userType }}!</h1>
+                        <p class="lead">The central hub of the app. Keep your functionality nice and organized.</p>
+                    </div>
+                </div>
+                <br>
+                <div class="container col-md-12">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            {{ form.credit_card.label(class="form-control-label") }}
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <ul class="list-group col-md-6">
+                            {% for cc in creditCards %} 
+                                <li class="list-group-item list-group-item d-flex justify-content-between align-items-center">
+                                    {{ cc }}
+                                    <!-- <a class="btn btn-danger btn-sm rounded-circle" href="{{ url_for('remove_cc', credit_card=cc, userType=userType, username=username) }}">X</a> -->
+                                    <form action="{{url_for('remove_cc', credit_card=cc, userType=userType, username=username)}}" method="post">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="submit" value="Delete" class="btn btn-danger">
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center">
+                        <div class="form-group col-md-5 pl-0">
+                            {% if form.credit_card.errors %}
+                                {{ form.credit_card(class="form-control form-control-lg is-invalid") }}
+                                <div style="color:red">
+                                    {% for error in form.credit_card.errors %}
+                                    <span style="font-size:13px">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.credit_card(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group col-md-1 pl-1">
+                            {{ form.addCC(class="btn btn-lg btn-outline-success") }}
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock %}
