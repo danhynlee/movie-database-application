@@ -2,6 +2,10 @@ drop database team55;
 create database team55;
 use team55;
 
+drop table CustomerViewMovie;
+drop table VisitUserTheater;
+drop table MoviePlay;
+
 CREATE TABLE Company (
 	comName VARCHAR(50) NOT NULL UNIQUE,
 	PRIMARY KEY (comName)
@@ -14,7 +18,7 @@ CREATE TABLE Movie (
 );
 CREATE TABLE User (
 	username VARCHAR(50) NOT NULL UNIQUE,
-    status VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT("Pending"),
     password VARCHAR(200) NOT NULL,
 	firstname VARCHAR(50) NOT NULL,
 	lastname VARCHAR(50) NOT NULL,
@@ -94,7 +98,7 @@ CREATE TABLE MoviePlay (
     comName VARCHAR(50) NOT NULL,
 	movName VARCHAR(50) NOT NULL,
 	movReleaseDate DATE NOT NULL,
-    movPlayDate DATE NOT NULL UNIQUE,
+    movPlayDate DATE NOT NULL,
 	PRIMARY KEY (thName, comName, movName, movReleaseDate, movPlayDate),
     FOREIGN KEY (thName, comName)
 		REFERENCES Theater (thName, comName)
