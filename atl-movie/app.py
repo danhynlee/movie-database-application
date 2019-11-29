@@ -213,13 +213,13 @@ def registerManagerCustomer():
         cur.execute("SELECT username from User")
         usernames = cur.fetchall()
         if username in [dictUser['username'] for dictUser in usernames]:
-            flash(f"Username already exists. Please try again.", 'danger')
+            flash("Username already exists. Please try again.", 'danger')
             return render_template('manager_customer_registration.html', title='Manager-Customer Registration', form=form)
 
         cur.execute("SELECT creditCardNum FROM CustomerCreditCard")
         ccNums = cur.fetchall()
         if credit_card in [dictCC['creditCardNum'] for dictCC in ccNums]:
-            flash(f'Credit Card number already exists. Please enter another one.', 'danger')
+            flash('Credit Card number already exists. Please enter another one.', 'danger')
             return render_template('manager_customer_registration.html', title="Manager-Customer Registration", form=form)
 
         cur.execute("INSERT INTO User(username, firstname, lastname, password, status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
@@ -257,37 +257,36 @@ def registerManagerCustomer():
 def dashboard():
     form = CreditCardForm()
     username = request.args['username']
-    creditCards = []
+    userType = request.args['userType']
 
-    cur = mysql.connection.cursor()
+    if userType == 'Customer' or userType == 'Manager-Customer' or userType == 'Admin-Customer':
+        creditCards = []
 
-    if form.validate_on_submit():
-        if form.addCC.data:
-            credit_card = form.credit_card.data
+        cur = mysql.connection.cursor()
 
-            cur.execute("INSERT INTO CustomerCreditCard(creditCardNum, username) VALUES(%s, %s)", (credit_card, username))
+        if form.validate_on_submit():
+            if form.addCC.data:
+                credit_card = form.credit_card.data
 
-            mysql.connection.commit()
+                cur.execute("INSERT INTO CustomerCreditCard(creditCardNum, username) VALUES(%s, %s)", (credit_card, username))
 
-            cur.close()
-        
-        return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
+                mysql.connection.commit()
 
-    # cur.execute("SELECT creditCardNum FROM CustomerCreditCard WHERE username=%s", (username,))
-    # credit_cards = cur.fetchall()
-    # creditCards = [dictCC['creditCardNum'] for dictCC in credit_cards]
+                cur.close()
 
-    cur.execute("SELECT creditCardNum FROM CustomerCreditCard WHERE username=%s", (username,))
-    user_cc = cur.fetchall()
+            return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
 
-    for cc in user_cc:
-        creditCards.append(cc['creditCardNum'])
+        cur.execute("SELECT creditCardNum FROM CustomerCreditCard WHERE username=%s", (username,))
+        credit_cards = cur.fetchall()
+        creditCards = [dictCC['creditCardNum'] for dictCC in credit_cards]
 
-    mysql.connection.commit()
+        mysql.connection.commit()
 
-    cur.close()
+        cur.close()
+
+        return render_template('dashboard.html', title='Dashboard', userType=request.args.get('userType'), username=username, form=form, creditCards=creditCards)
     
-    return render_template('dashboard.html', title='Dashboard', form=form, creditCards=creditCards, userType=request.args.get('userType'))
+    return render_template('dashboard.html', title='Dashboard', userType=request.args.get('userType'), username=username, form=form)
 
 @app.route('/remove_cc/<string:credit_card>', methods=['GET', 'POST'])
 def remove_cc(credit_card):
