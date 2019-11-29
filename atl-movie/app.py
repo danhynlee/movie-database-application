@@ -89,8 +89,29 @@ def registerNavigation():
 @app.route('/user_registration', methods=['GET', 'POST'])
 def registerUser():
     form = UserRegistrationForm()
-    if form.validate_on_submit():
-        flash(f'Account created for User {form.username.data}!', 'success')
+    if form.validate_on_submit() and request.method == 'POST':
+        username = form.username.data
+        firstname = form.firstname.data
+        lastname = form.lastname.data
+        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        status = 'Pending'
+
+        cur = mysql.connection.cursor()
+
+        # checks for duplicate username
+        cur.execute("SELECT username FROM user")
+        usernames = cur.fetchall()
+        if username in [dictUser['username'] for dictUser in usernames]:
+            flash(f"Username already exists. Please try again.", 'danger')
+            return render_template('user_registration.html', title='User Registration', form=form)
+
+        cur.execute("INSERT INTO user(Username, Firstname, Lastname, Password, Status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
+
+        mysql.connection.commit()
+
+        cur.close()
+
+        flash(f'Account Creation Successful for {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('user_registration.html', title='User Registration', form=form)
 
