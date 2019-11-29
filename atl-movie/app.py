@@ -105,7 +105,7 @@ def registerUser():
             flash(f"Username already exists. Please try again.", 'danger')
             return render_template('user_registration.html', title='User Registration', form=form)
 
-        cur.execute("INSERT INTO User(username, status, password, firstname, lastname) VALUES(%s, %s, %s, %s, %s)", (username, status, password, firstname, lastname))
+        cur.execute("INSERT INTO User(username, firstname, lastname, password, status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
 
         mysql.connection.commit()
 
