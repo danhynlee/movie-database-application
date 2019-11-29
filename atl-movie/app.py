@@ -1,8 +1,8 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
-
+# from functools import wraps
 
 
 app = Flask(__name__)
@@ -225,6 +225,7 @@ def registerManagerCustomer():
         cur.execute("INSERT INTO User(username, firstname, lastname, password, status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
         cur.execute("INSERT INTO Employee(username) VALUES(%s)", (username,))
         cur.execute("INSERT INTO Customer(username) VALUES(%s)", (username,))
+        cur.execute("INSERT INTO CustomerCreditCard(creditCardNum, username) VALUES(%s, %s)", (credit_card, username))
         cur.execute("INSERT INTO Manager(username, comName, manStreet, manCity, manState, manZipcode) VALUES(%s, %s, %s, %s, %s, %s)", (username, company, street_address, city, state, zipcode))
 
         mysql.connection.commit()
@@ -233,6 +234,81 @@ def registerManagerCustomer():
         flash(f'Account created for Manager-Customer {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('manager_customer_registration.html', title='Manager-Customer Registration', form=form)
+
+# @app.route('/logout')
+# def is_logged_in(f):
+#     @wraps(f)
+#     def wrap(*args, **kwargs):
+#         if 'logged_in' in session:
+#             return f(*args, **kwargs)
+#         else:
+#             flash(f'Unauthorized, Please login', 'danger')
+#             return redirect(url_for('login'))
+#     return wrap
+
+# @app.route('/logout')
+# def logout():
+#     session.clear()
+#     flash(f'You are now logged out', 'success')
+#     return redirect(url_for('home'))
+
+@app.route('/dashboard', methods=['GET', 'POST'])
+# @is_logged_in
+def dashboard():
+    form = CreditCardForm()
+    username = request.args['username']
+    creditCards = []
+
+    cur = mysql.connection.cursor()
+
+    if form.validate_on_submit():
+        if form.addCC.data:
+            credit_card = form.credit_card.data
+
+            cur.execute("INSERT INTO CustomerCreditCard(creditCardNum, username) VALUES(%s, %s)", (credit_card, username))
+
+            mysql.connection.commit()
+
+            cur.close()
+        
+        return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
+
+    # cur.execute("SELECT creditCardNum FROM CustomerCreditCard WHERE username=%s", (username,))
+    # credit_cards = cur.fetchall()
+    # creditCards = [dictCC['creditCardNum'] for dictCC in credit_cards]
+
+    cur.execute("SELECT creditCardNum FROM CustomerCreditCard WHERE username=%s", (username,))
+    user_cc = cur.fetchall()
+
+    for cc in user_cc:
+        creditCards.append(cc['creditCardNum'])
+
+    mysql.connection.commit()
+
+    cur.close()
+    
+    return render_template('dashboard.html', title='Dashboard', form=form, creditCards=creditCards, userType=request.args.get('userType'))
+
+@app.route('/remove_cc/<credit_card>', methods=['GET', 'POST'])
+def remove_cc(credit_card):
+    username = request.args['username']
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT COUNT(*) FROM CustomerCreditCard WHERE username=%s", (username,))
+    credit_cards = cur.fetchone()
+    cc_count = credit_cards['COUNT(*)']
+    if cc_count == 1:
+        flash('You must have at least one email', 'danger')
+        return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
+
+    cur.execute("DELETE FROM CustomerCreditCard WHERE creditCardNum=%s", (credit_card,))
+
+    mysql.connection.commit()
+
+    cur.close()
+    return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
+
 
 
 if  __name__ == '__main__':
