@@ -1,10 +1,20 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm
+from flask_mysqldb import MySQL
+from flask_bcrypt import Bcrypt
+
 
 
 app = Flask(__name__)
 
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '#DannyLee123'
+app.config['MYSQL_DB'] = 'team55'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['SECRET_KEY'] = 'c2d4f765f01f6f0f4511e83d2f5469ac'
+mysql = MySQL(app)
+bcrypt = Bcrypt(app)
 
 @app.route('/')
 @app.route('/home')
