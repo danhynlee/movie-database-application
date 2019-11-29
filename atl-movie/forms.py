@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, FieldList, FormField
-from wtforms.validators import DataRequired, Length, EqualTo
+from wtforms.validators import DataRequired, InputRequired, Length, EqualTo
 
 
 class UserRegistrationForm(FlaskForm):
@@ -62,3 +62,7 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class CreditCardForm(FlaskForm):
+    credit_card = StringField('Credit Cards', validators=[InputRequired(), Length(min=16,max=16, message="Credit Card number must be 16 digits.")])
+    addCC = SubmitField('Add')
