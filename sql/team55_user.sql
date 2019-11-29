@@ -26,7 +26,7 @@ CREATE TABLE `User` (
   `username` varchar(50) NOT NULL,
   `firstname` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `password` varchar(200) NOT NULL,
   `status` varchar(50) NOT NULL,
   PRIMARY KEY (`username`),
   UNIQUE KEY `username` (`username`)
