@@ -116,10 +116,39 @@ def registerUser():
     return render_template('user_registration.html', title='User Registration', form=form)
 
 # s4 customer navigation
-@app.route('/customer_registration')
+@app.route('/customer_registration', methods=['GET', 'POST'])
 def registerCustomer():
     form = CustomerRegistrationForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and request.method == 'POST':
+        username = form.username.data
+        firstname = form.firstname.data
+        lastname = form.lastname.data
+        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        status = 'Pending'
+        credit_card = form.credit_card.data
+
+        cur = mysql.connection.cursor()
+
+        cur.execute("SELECT username FROM user")
+        usernames = cur.fetchall()
+        if username in [dictUser['username'] for dictUser in usernames]:
+            flash(f"Username already exists. Please try again.", 'danger')
+            return render_template('customer_registration.html', title='Customer Registration', form=form)
+        
+        cur.execute("SELECT CreditCardnum FROM creditcard")
+        ccNums = cur.fetchall()
+        if credit_card in [dictCC['CreditCardnum'] for dictCC in ccNums]:
+            flash(f'Credit Card number already exists. Please enter another one.', 'danger')
+            return render_template('customer_registration.html', title="Customer Registration", form=form)
+        
+        cur.execute("INSERT INTO user(Username, Firstname, Lastname, Password, Status) VALUES(%s, %s, %s, %s, %s)", (username, firstname, lastname, password, status))
+        cur.execute("INSERT INTO customer(Username) VALUES(%s)", (username,))
+        cur.execute("INSERT INTO creditcard(CreditCardnum, CUsername) VALUES(%s, %s)", (credit_card, username))
+
+        mysql.connection.commit()
+
+        cur.close()
+
         flash(f'Account created for Customer {form.username.data}!', 'success')
         return redirect(url_for('home'))
     return render_template('customer_registration.html', title='Customer Registration', form=form)
