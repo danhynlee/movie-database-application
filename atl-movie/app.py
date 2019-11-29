@@ -71,15 +71,15 @@ def login():
                 else:
                     session['creditcards'] = None
                 
-                flash(f'You have been logged in.', 'success')
-                return redirect(url_for('home', creditcards=session['creditcards'], userType=session['userType'], username=session['username']))
+                # flash('You have been logged in.', 'success')
+                return redirect(url_for('dashboard', creditcards=session['creditcards'], userType=session['userType'], username=session['username']))
             else:
-                flash(f'Invalid login', 'danger')
+                flash('Invalid login', 'danger')
                 return render_template('login.html', title='Atlanta Movie Login', form=form)
             
             cur.close()
         else:
-            flash(f'Username does not exist.', 'danger')
+            flash('Username does not exist.', 'danger')
     return render_template('login.html', title='Atlanta Movie Login', form=form)
 
 # s2 register navigation
