@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+            <legend class="border-bottom mb-4">Create Movie</legend>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="row justify-content-between">
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.movName.label(class="form-control-label") }}
+                                {% if form.movName.errors %}
+                                    {{ form.movName(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.movName.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.movName(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.duration.label(class="form-control-label") }}
+                                {% if form.duration.errors %}
+                                    {{ form.duration(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.thName.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.duration(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between">
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.releaseDate.label(class="form-control-label") }}
+                                {% if form.releaseDate.errors %}
+                                    {{ form.releaseDate(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.releaseDate.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.releaseDate(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="row justify-content-between">
+                    <div class="col-4">
+                        <div class="form-group">
+                            {{ form.create(class="btn btn-outline-info") }}
+                        </div>
+                    </div>
+                    <div class="col-4 text-right">
+                        <a class="btn btn-outline-info mb-3" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
