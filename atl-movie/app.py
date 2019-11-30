@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, VisitHistoryForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, CreateTheaterForm, VisitHistoryForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 
@@ -437,6 +437,43 @@ def company_detail(target_company):
     cur.close()
 
     return render_template("company_detail.html", title="Company Detail", userType=request.args.get('userType'), username=request.args.get('username'), company=target_company, employees=employees, theaters=theaters)
+
+@app.route('/create_theater', methods=['GET', 'POST'])
+def create_theater():
+    form = CreateTheaterForm()
+    managers = all_managers()
+
+    if form.validate_on_submit() and request.method == 'POST':
+        thName = form.thName.data
+        company = form.company.data
+        street_address = form.street_address.data
+        city = form.city.data
+        state = form.state.data
+        zipcode = form.zipcode.data
+        capacity = int(form.capacity.data)
+        manager = request.form.get('manager')
+
+        manuser = manager.split()[1]
+        punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+        for x in manuser: 
+            if x in punctuations: 
+                manuser = manuser.replace(x, "") 
+        flash(f'{manuser}', 'success')
+
+        cur = mysql.connection.cursor()
+
+        cur.execute("INSERT INTO Theater(thName, comName, thStreet, thCity, thState, thZipcode, capacity, manUsername) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", (thName, company, street_address, city, state, zipcode, capacity, manuser))
+
+        mysql.connection.commit()
+
+        cur.close()
+        flash('Theater created successfully.', 'success')
+        return redirect(url_for('manage_company', userType=request.args.get('userType'), username=request.args.get('username')))
+    
+    return render_template("create_theater.html", title="Create Theater", userType=request.args.get('userType'), username=request.args.get('username'), form=form, managers=managers)
+
+
+
 
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
