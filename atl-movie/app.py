@@ -606,5 +606,29 @@ def all_managers():
     cur.close()
     return managers
 
+def all_movies():
+    cur = mysql.connection.cursor()
+
+    movies = []
+    cur.execute("SELECT movPlayDate, movName, movReleaseDate FROM MoviePlay")
+    movieData = cur.fetchall()
+
+    for movie in movieData:
+        movie['duration'] = 0
+        movies.append(movie)
+    
+    for movie in movies:
+        cur.execute("SELECT duration FROM Movie WHERE movName=%s and movReleaseDate=%s", (movie['movName'], movie['movReleaseDate']))
+        duration = cur.fetchone()['duration']
+        movie['duration'] = duration
+    
+    cur.execute("SELECT movName, movReleaseDate, duration FROM Movie WHERE (movName, movReleaseDate) NOT IN (SELECT movName, movReleaseDate FROM MoviePlay)")
+    movieData = cur.fetchall()
+    for movie in movieData:
+        movie['movPlayDate'] = None
+        movies.append(movie)
+    
+    return movies
+
 if  __name__ == '__main__':
     app.run(debug=True)
