@@ -315,6 +315,9 @@ def manage_user():
                             filtered.append(user)
                 return render_template('manage_user.html', title="Manage User", userType=request.args.get('userType'), username=request.args.get('username'), form=form, users=filtered)
         elif form.approve.data:
+            if 'user' not in request.form:
+                flash('Please select a user.', 'danger')
+                return redirect(url_for('manage_user', userType=request.args.get('userType'), username=request.args.get('username')))
             target_user = request.form['user']
             for user in users:
                 if user['username'] == target_user:
@@ -328,6 +331,9 @@ def manage_user():
                     cur.close()
             return redirect(url_for('manage_user', userType=request.args.get('userType'), username=request.args.get('username')))
         elif form.decline.data:
+            if 'user' not in request.form:
+                flash('Please select a user.', 'danger')
+                return redirect(url_for('manage_user', userType=request.args.get('userType'), username=request.args.get('username')))
             target_user = request.form['user']
             for user in users:
                 if user['username'] == target_user:
