@@ -475,6 +475,7 @@ def create_theater():
 
 
 
+
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
     form = VisitHistoryForm()
@@ -564,6 +565,21 @@ def all_companies():
         company['displayCom'] = company['comName'].replace(" Theater Company", "")
     return companies
 
+def all_managers():
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT username, firstname, lastname FROM User WHERE username in (SELECT username FROM Manager WHERE username not in (SELECT manUsername FROM Theater))")
+    managerData = cur.fetchall()
+
+    managers = []
+    for manager in managerData:
+        manager['name'] = f"{manager['firstname']} {manager['lastname']}"
+        managers.append(manager)
+
+    mysql.connection.commit()
+
+    cur.close()
+    return managers
 
 if  __name__ == '__main__':
     app.run(debug=True)
