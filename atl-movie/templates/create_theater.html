@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+
+            <legend class="border-bottom mb-4">Create Theater</legend>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="row justify-content-between">
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.thName.label(class="form-control-label") }}
+                                {% if form.thName.errors %}
+                                    {{ form.thName(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.thName.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.thName(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                {{ form.company.label(class="form-control-label") }}
+                                {{ form.company(class="form-control form-control-lg") }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                {{ form.street_address.label(class="form-control-label") }}
+                                {% if form.street_address.errors %}
+                                    {{ form.street_address(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.street_address.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.street_address(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                {{ form.city.label(class="form-control-label") }}
+                                {% if form.city.errors %}
+                                    {{ form.city(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.city.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.city(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                {{ form.state.label(class="form-control-label") }}
+                                {{ form.state(class="form-control form-control-lg") }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                {{ form.zipcode.label(class="form-control-label") }}
+                                {% if form.zipcode.errors %}
+                                    {{ form.zipcode(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.zipcode.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.zipcode(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.capacity.label(class="form-control-label") }}
+                                {% if form.capacity.errors %}
+                                    {{ form.capacity(class="form-control form-control-lg form-control-num is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.capacity.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.capacity(class="form-control form-control-lg form-control-num") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="manager" class="form-control-label">Manager</label>
+                                <select name="manager" class="form-control form-control-lg" id="manager" required>
+                                    {% for manager in managers %}
+                                        <option name="manager" value='{{manager}}'>{{ manager['name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="row justify-content-between">
+                    <div class="col-4">
+                        <div class="form-group">
+                            {{ form.create(class="btn btn-outline-info") }}
+                        </div>
+                    </div>
+                    <div class="col-4 text-right">
+                        <a class="btn btn-outline-info mb-3" href="{{ url_for('manage_company', userType=userType, username=username) }}">Back</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
