@@ -413,9 +413,30 @@ def manage_company():
 
 @app.route('/company_detail/<string:target_company>', methods=['GET', 'POST'])
 def company_detail(target_company):
+    cur = mysql.connection.cursor()
 
+    employees = []
+    cur.execute("SELECT firstname, lastname FROM User WHERE username in (SELECT username FROM Manager WHERE comName=%s)", (target_company,))
+    employeeData = cur.fetchall()
 
-    return render_template("company_detail.html", title="Company Detail", userType=request.args.get('userType'), username=request.args.get('username'), company=target_company)
+    for emp in employeeData:
+        emp['name'] = f"{emp['firstname']} {emp['lastname']}"
+        employees.append(emp)
+
+    theaters = []
+    cur.execute("SELECT thName, manUsername, thCity, thState, capacity FROM Theater WHERE comName=%s", (target_company,))
+    theaters = cur.fetchall()
+
+    for theater in theaters:
+        cur.execute("SELECT firstname, lastname FROM User WHERE username=%s", (theater['manUsername'],))
+        managerName = cur.fetchone()
+        theater['manName'] = f"{managerName['firstname']} {managerName['lastname']}"
+
+    mysql.connection.commit()
+
+    cur.close()
+
+    return render_template("company_detail.html", title="Company Detail", userType=request.args.get('userType'), username=request.args.get('username'), company=target_company, employees=employees, theaters=theaters)
 
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
