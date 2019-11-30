@@ -1,0 +1,171 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Manage Company</legend>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    {{ form.company.label(class="form-control-label", style="padding-right:30px") }}
+                                    {% if form.company.errors %}
+                                        {{ form.company(class="form-control form-control-md is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.company.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.company(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:30px"># City Covered</label>
+                                    {% if form.minCityNum.errors %}
+                                    {{ form.minCityNum(class="form-control form-control-md form-control-num is-invalid") }}
+                                    <div style="color:red">
+                                        {% for error in form.minCityNum.errors %}
+                                        <span style="font-size:13px">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    {{ form.minCityNum(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:15px; padding-left:15px">-</label>
+                                    {% if form.maxCityNum.errors %}
+                                        {{ form.maxCityNum(class="form-control form-control-md form-control-num is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.maxCityNum.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.maxCityNum(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:30px"># Theater</label>
+                                    {% if form.minTheaters.errors %}
+                                    {{ form.minTheaters(class="form-control form-control-md form-control-num is-invalid") }}
+                                    <div style="color:red">
+                                        {% for error in form.minTheaters.errors %}
+                                        <span style="font-size:13px">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% else %}
+                                    {{ form.minTheaters(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group ">
+                                    <label class='form-control-label' style="padding-right:15px; padding-left:15px">-</label>
+                                    {% if form.maxTheaters.errors %}
+                                        {{ form.maxTheaters(class="form-control form-control-md form-control-num is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.maxTheaters.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.maxTheaters(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:52px"># Employee</label>
+                                    {% if form.minEmployeeNum.errors %}
+                                        {{ form.minEmployeeNum(class="form-control form-control-md form-control-num is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.minEmployeeNum.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.minEmployeeNum(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:15px; padding-left:15px">-</label>
+                                    {% if form.maxEmployeeNum.errors %}
+                                        {{ form.maxEmployeeNum(class="form-control form-control-md form-control-num is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.maxEmployeeNum.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.maxEmployeeNum(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        {{ form.filter(class="btn btn-outline-info") }}
+                        <a class="btn btn-outline-info float-right mr-3" href="#">Create Theater</a>
+                        {{ form.detail(class="btn btn-outline-info float-right mr-3") }}
+                    </div>
+                    <div class="form-group">
+                        <table class="table" data-toggle="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" data-sortable="true" data-width="250">Name
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col" data-sortable="true" data-width="200">#CityCovered
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col" data-sortable="true" data-width="250">#Theaters
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col" data-sortable="true" data-width="200">#Employee
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for company in companyList %}
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="comName" value="{{ company['comName'] }}">
+                                            <label for="comName" style="padding-left: 10px">{{ company['displayCom'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="cityNum">{{ company['cityNum'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="theaterNum">{{ company['theaterNum'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="employeeNum">{{ company['employeeNum'] }}</label>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <a class="btn btn-outline-info mb-3" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+    </div>
+{% endblock content %}
