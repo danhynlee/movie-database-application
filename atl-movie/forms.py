@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, FieldList, FormField, DateField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, FieldList, FormField, DateField, IntegerField, BooleanField
 from wtforms.validators import DataRequired, InputRequired, Length, EqualTo
 
 
@@ -106,6 +106,17 @@ class CreateMovieForm(FlaskForm):
     duration = IntegerField('Duration', validators=[DataRequired()])
     releaseDate = DateField('Release Date', validators=[DataRequired()])
     create = SubmitField('Create')
+
+class TheaterOverviewForm(FlaskForm):
+    movName = StringField('Name')
+    movMinDuration = IntegerField('Min Duration')
+    movMaxDuration = IntegerField('Max Duration')
+    movReleaseDateStart = DateField('Release Start')
+    movReleaseDateEnd = DateField('Release End')
+    movPlayDateStart = DateField('Play Start')
+    movPlayDateEnd = DateField('Play End')
+    notPlayed = BooleanField('Only Include Not Played Movies')
+    filter = SubmitField('Filter')
 
 class VisitHistoryForm(FlaskForm):
     company = SelectField('Company', choices = [('all','--All--'), ('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
