@@ -72,25 +72,25 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS manager_filter_th;
 DELIMITER $$
-CREATE definer = `root`@`localhost` PROCEDURE `manager_filter_th`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_minMovDuration INT(50), IN i_maxMovDuration INT(50), IN i_minMovReleaseDate DATE, IN i_maxMovReleaseDate DATE, IN i_minMovPlayDate DATE, IN i_maxMovPlayDate DATE, IN i_includedNotPlay BOOLEAN)
+CREATE definer = `root`@`localhost` PROCEDURE `manager_filter_th`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_minMovDuration INT(50), IN i_maxMovDuration INT(50), IN i_minMovReleaseDate DATE, IN i_maxMovReleaseDate DATE, IN i_minMovPlayDate DATE, IN i_maxMovPlayDate DATE, IN i_includedNotPlay BOOL)
 BEGIN
     DROP TABLE IF EXISTS ManFilterTh;
     CREATE TABLE ManFilterTh
-	SELECT DISTINCT m.movName, duration AS movDuration, m.movReleaseDate, movPlayDate
+	SELECT DISTINCT m.movName, duration AS movDuration, m.movReleaseDate, movPlayDate, i_includedNotPlay
     FROM movieplay as p
 		RIGHT OUTER JOIN
         movie as m
         ON p.movName = m.movName
 	WHERE
+		(i_includedNotPlay = NULL OR i_includedNotPlay != 1) AND
 		(m.movName = i_movName OR i_movName = "ALL" OR i_movName = "") AND
         (i_minMovDuration IS NULL OR duration >= i_minMovDuration) AND
         (i_maxMovDuration IS NULL OR duration <= i_maxMovDuration) AND
         (i_minMovPlayDate IS NULL OR movPlayDate >= i_minMovPlayDate) AND
         (i_maxMovPlayDate IS NULL OR movPlayDate <= i_maxMovPlayDate) AND 
 		(thName IN (SELECT thName FROM theater WHERE manUsername = i_manUsername)) 
-        AND (i_includedNotPlay != TRUE OR i_includedNotPlay = NULL OR i_includedNotPlay = FALSE)
 UNION
-(SELECT movName, duration AS movDuration, movReleaseDate, NULL AS movPlayDate
+(SELECT movName, duration AS movDuration, movReleaseDate, NULL AS movPlayDate, i_includedNotPlay
 FROM movie
 WHERE movName NOT IN 
 	(SELECT movName 
