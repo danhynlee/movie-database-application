@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, VisitHistoryForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 # from functools import wraps
@@ -42,7 +42,9 @@ def login():
         if valid:
             password = cur.fetchone()['password']
 
-            if bcrypt.check_password_hash(password, password_check):
+            #for initial unhashed passwords in database
+            if password == password_check:
+            # if bcrypt.check_password_hash(password, password_check):
                 session['logged_in'] = True
                 session['username'] = username
 
@@ -235,17 +237,6 @@ def registerManagerCustomer():
         return redirect(url_for('home'))
     return render_template('manager_customer_registration.html', title='Manager-Customer Registration', form=form)
 
-# @app.route('/logout')
-# def is_logged_in(f):
-#     @wraps(f)
-#     def wrap(*args, **kwargs):
-#         if 'logged_in' in session:
-#             return f(*args, **kwargs)
-#         else:
-#             flash(f'Unauthorized, Please login', 'danger')
-#             return redirect(url_for('login'))
-#     return wrap
-
 @app.route('/logout')
 def logout():
     session.clear()
@@ -253,7 +244,6 @@ def logout():
     return redirect(url_for('home'))
 
 @app.route('/dashboard', methods=['GET', 'POST'])
-# @is_logged_in
 def dashboard():
     form = CreditCardForm()
     username = request.args['username']
@@ -288,6 +278,89 @@ def dashboard():
     
     return render_template('dashboard.html', title='Dashboard', userType=request.args.get('userType'), username=username, form=form)
 
+
+
+@app.route('/manage_user', methods=['GET', 'POST'])
+def manage_user():
+    form = ManageUserForm()
+    users = all_users()
+
+    if form.validate_on_submit() and request.method =='POST':
+        if form.filter.data:
+            username = form.username.data
+            status = form.status.data
+            filtered = []
+
+            if username == "":
+                for user in users:
+                    if status == 'all':
+                        filtered.append(user)
+                    elif status == 'approved' and user['status'] == 'Approved':
+                        filtered.append(user)
+                    elif status == 'pending' and user['status'] == 'Pending':
+                        filtered.append(user)
+                    elif status == 'declined' and user['status'] == 'Declined':
+                        filtered.append(user)
+                return render_template('manage_user.html', title="Manage User", userType=request.args.get('userType'), username=request.args.get('username'), form=form, users=filtered)
+            else:
+                for user in users:
+                    if user['username'] == username:
+                        if status == 'all':
+                            filtered.append(user)
+                        elif status == 'approved' and user['status'] == 'Approved':
+                            filtered.append(user)
+                        elif status == 'pending' and user['status'] == 'Pending':
+                            filtered.append(user)
+                        elif status == 'declined' and user['status'] == 'Declined':
+                            filtered.append(user)
+                return render_template('manage_user.html', title="Manage User", userType=request.args.get('userType'), username=request.args.get('username'), form=form, users=filtered)
+        elif form.approve.data:
+            target_user = request.form['user']
+            for user in users:
+                if user['username'] == target_user:
+
+                    cur = mysql.connection.cursor()
+                    if user['status'] == 'Pending' or user['status'] == 'Declined':
+                        cur.execute("UPDATE User SET status='Approved' WHERE username=%s", (target_user,))
+
+                    mysql.connection.commit()
+
+                    cur.close()
+            return redirect(url_for('manage_user', userType=request.args.get('userType'), username=request.args.get('username')))
+        elif form.decline.data:
+            target_user = request.form['user']
+            for user in users:
+                if user['username'] == target_user:
+
+                    cur = mysql.connection.cursor()
+                    if user['status'] == 'Pending':
+                        cur.execute("UPDATE User SET status='Declined' WHERE username=%s", (target_user,))
+
+                    mysql.connection.commit()
+
+                    cur.close()
+            return redirect(url_for('manage_user', userType=request.args.get('userType'), username=request.args.get('username')))
+    return render_template('manage_user.html', title="Manage User", userType=request.args.get('userType'), username=request.args.get('username'), form=form, users=users)
+
+
+@app.route('/visit_history', methods=['GET', 'POST'])
+def visit_history():
+    form = VisitHistoryForm()
+
+    username = request.args['username']
+    userType = request.args['userType']
+
+    cur = mysql.connection.cursor()
+
+
+
+    return render_template("visit_history.html", title="Visit History", userType=request.args.get('userType'), username=request.args.get('username'), form=form)
+
+
+
+
+
+
 @app.route('/remove_cc/<string:credit_card>', methods=['GET', 'POST'])
 def remove_cc(credit_card):
     username = request.args['username']
@@ -308,6 +381,49 @@ def remove_cc(credit_card):
     cur.close()
     return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
 
+def all_users():
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT username, status FROM User")
+    userData = cur.fetchall()
+    
+    users = []
+    for user in userData:
+        user['ccCount'] = 0
+        users.append(user)
+
+    cur.execute("SELECT username FROM CustomerCreditCard")
+    userCC = cur.fetchall()
+    
+    for user1 in userCC:
+        username = user1['username']
+        for user2 in userData:
+            if user2['username'] == username:
+                user2['ccCount'] += 1
+    
+    cur.execute("SELECT username FROM Customer")
+    customerData = cur.fetchall()
+    customers = [dictCustomer['username'] for dictCustomer in customerData]
+
+    cur.execute("SELECT username FROM Manager")
+    managerData = cur.fetchall()
+    managers = [dictManager['username'] for dictManager in managerData]
+
+    for user in users:
+        username = user['username']
+        if username in managers and username in customers:
+            user['userType'] = 'Manager-Customer'
+        elif username in managers:
+            user['userType'] = 'Manager'
+        elif username in customers:
+            user['userType'] = 'Customer'
+        else:
+            user['userType'] = 'User'
+        
+    mysql.connection.commit()
+
+    cur.close()
+    return users
 
 
 if  __name__ == '__main__':
