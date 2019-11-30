@@ -84,3 +84,25 @@ class ManageCompanyForm(FlaskForm):
     maxEmployeeNum = IntegerField('Max # Employee')
     filter = SubmitField('Filter')
     detail = SubmitField('Company Detail')
+
+class CreateTheaterForm(FlaskForm):
+    thName = StringField('Name', validators=[DataRequired()])
+    company = SelectField('Company', choices = [('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
+    street_address = StringField('Street Address', validators=[DataRequired()])
+    city = StringField('City', validators=[DataRequired()])
+    STATES = ('AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 
+                'HI', 'ID', 'IL', 'IN', 'IO', 'KS', 'KY', 'LA', 'ME', 'MD', 
+                'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 
+                'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 
+                'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'Other')
+    state = SelectField('State', choices=[(state, state) for state in STATES])
+    zipcode = StringField('Zipcode', validators=[DataRequired(), Length(min=5, max=5, message="Zipcode must be 5 digits.")])
+    capacity = IntegerField('Capacity')
+    create = SubmitField('Create')
+    back = SubmitField('Back')
+
+class VisitHistoryForm(FlaskForm):
+    company = SelectField('Company', choices = [('all','--All--'), ('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
+    fromDate = DateField('From')
+    toDate = DateField('To')
+    filter = SubmitField('Filter')
