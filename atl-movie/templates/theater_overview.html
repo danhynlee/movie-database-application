@@ -1,0 +1,181 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+            <legend class="border-bottom mb-4">Theater Overview</legend>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="row justify-content-between">
+                        <div class="col-5" style="padding-left: 150px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    {{ form.movName.label(class="form-control-label", style="padding-right:30px") }}
+                                    {% if form.movName.errors %}
+                                        {{ form.movName(class="form-control form-control-md is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.movName.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.movName(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5" style="padding-right: 29px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:20px">Duration</label>
+                                    {% if form.movMinDuration.errors %}
+                                        {{ form.movMinDuration(class="form-control form-control-md form-control-num is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.movMinDuration.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.movMinDuration(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:15px; padding-left:15px">-</label>
+                                    {% if form.movMaxDuration.errors %}
+                                        {{ form.movMaxDuration(class="form-control form-control-md form-control-num is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.movMaxDuration.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.movMaxDuration(class="form-control form-control-md form-control-num") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row" style="padding-left: 101px;">
+                        <div class="col-8">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:52px">Movie Release Date</label>
+                                    {% if form.movReleaseDateStart.errors %}
+                                        {{ form.movReleaseDateStart(class="form-control form-control-md is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.movReleaseDateStart.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.movReleaseDateStart(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:15px; padding-left:15px">-</label>
+                                    {% if form.movReleaseDateEnd.errors %}
+                                        {{ form.movReleaseDateEnd(class="form-control form-control-md is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.movReleaseDateEnd.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.movReleaseDateEnd(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center">
+                        <div class="col-8" style="margin-left: -101px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:52px">Movie Play Date</label>
+                                    {% if form.movPlayDateStart.errors %}
+                                        {{ form.movPlayDateStart(class="form-control form-control-md is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.movPlayDateStart.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.movPlayDateStart(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label class='form-control-label' style="padding-right:15px; padding-left:15px">-</label>
+                                    {% if form.movPlayDateEnd.errors %}
+                                        {{ form.movPlayDateEnd(class="form-control form-control-md is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.movPlayDateEnd.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.movPlayDateEnd(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                {{ form.filter(class="btn btn-outline-info") }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-check">
+                                {{ form.notPlayed(class="form-check-input") }}
+                                {{ form.notPlayed.label(class="form-check-label") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <table id="table" data-toggle="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Movie Name
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col">Duration
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col">Release Date
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col">Play Date
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for movie in movies %}
+                                <tr>
+                                    <td>
+                                        <label for="movName">{{ movie['movName'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="duration">{{ movie['duration'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="movReleaseDate">{{ movie['movReleaseDate'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="movPlayDate">{{ movie['movPlayDate'] }}</label>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </fieldset>
+                <a class="btn btn-outline-info mb-3" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
