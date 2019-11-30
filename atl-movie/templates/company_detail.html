@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+            <legend class="border-bottom mb-4">Company Detail</legend>
+            <legend class="border-bottom mb-4 display-4">{{ company }}</legend>
+            <table id="table" data-toggle="table" data-height="300">
+                <thead>
+                    <tr>
+                        <th data-field="employee">Employees</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employees %}
+                    <tr>
+                        <td>
+                            <label for="employeeNum">{{ emp['name'] }}</label>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <legend class="border-bottom mb-4">Theaters</legend>
+            <table id="table" data-toggle="table" data-height="300">
+                <thead>
+                    <tr>
+                        <th scope="col">Name
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">Manager
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">City
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">State
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">Capacity
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for th in theaters %}
+                        <tr>
+                            <td>
+                                <label for="theaterName">{{ th['thName'] }}</label>
+                            </td>
+                            <td>
+                                <label for="managerName">{{ th['manName'] }}</label>
+                            </td>
+                            <td>
+                                <label for="theaterCity">{{ th['thCity'] }}</label>
+                            </td>
+                            <td>
+                                <label for="theaterState">{{ th['thState'] }}</label>
+                            </td>
+                            <td>
+                                <label for="capacity">{{ th['capacity'] }}</label>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-outline-info mb-3" href="{{ url_for('manage_company', userType=userType, username=username) }}">Back</a>
+        </div>
+    </div>
+{% endblock content %}
