@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, FieldList, FormField, DateField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, FieldList, FormField, DateField, IntegerField
 from wtforms.validators import DataRequired, InputRequired, Length, EqualTo
 
 
@@ -74,3 +74,13 @@ class ManageUserForm(FlaskForm):
     approve = SubmitField('Approve')
     decline = SubmitField('Decline')
 
+class ManageCompanyForm(FlaskForm):
+    company = SelectField('Company', choices = [('all','--All--'), ('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
+    minCityNum = IntegerField('Min # City')
+    maxCityNum = IntegerField('Max # City')
+    minTheaters = IntegerField('Min # Theater')
+    maxTheaters = IntegerField('Max # Theater')
+    minEmployeeNum = IntegerField('Min # Employee')
+    maxEmployeeNum = IntegerField('Max # Employee')
+    filter = SubmitField('Filter')
+    detail = SubmitField('Company Detail')
