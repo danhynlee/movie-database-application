@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Manage User</legend>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        {{ form.username.label(class="form-control-label") }}
+                        {% if form.username.errors %}
+                            {{ form.username(class="form-control form-control-lg is-invalid") }}
+                            <div style="color:red">
+                                {% for error in form.username.errors %}
+                                <span style="font-size:13px">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.username(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-3">
+                        {{ form.status.label(class="form-control-label") }}
+                        {% if form.status.errors %}
+                            {{ form.status(class="form-control form-control-lg is-invalid") }}
+                            <div style="color:red">
+                                {% for error in form.status.errors %}
+                                <span style="font-size:13px">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.status(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.filter(class="btn btn-outline-info") }}
+                    {{ form.approve(class="btn btn-outline-info float-right") }}
+                    {{ form.decline(class="btn btn-outline-info float-right mr-3") }}
+                </div>
+                <div class="form-group">
+                    <table class="table" data-toggle="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" data-sortable="true" data-width="250">Username
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col" data-sortable="true" data-width="200">Credit Cards
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col" data-sortable="true" data-width="250">User Type
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col" data-sortable="true" data-width="200">Status
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        <input type="radio" name="user" value="{{ user['username'] }}">
+                                        <label for="username" style="padding-left: 10px">{{ user['username'] }}</label>
+                                        <input type="hidden" name="user_name" value="{{all_users}}">
+                                    </td>
+                                    <td>
+                                        <label for="ccCount">{{ user['ccCount'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="userType">{{ user['userType'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="status">{{ user['status'] }}</label>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        </form>
+        <a class="btn btn-outline-info mb-3" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+    </div>
+{% endblock content %}
