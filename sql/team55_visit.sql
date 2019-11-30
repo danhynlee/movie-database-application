@@ -4,6 +4,7 @@
 -- ------------------------------------------------------
 -- Server version	8.0.17
 
+use team55;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -19,10 +20,10 @@
 -- Table structure for table `VisitUserTheater`
 --
 
-DROP TABLE IF EXISTS `VisitUserTheater`;
+DROP TABLE IF EXISTS `UserVisitTheater`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `VisitUserTheater` (
+CREATE TABLE `UserVisitTheater` (
   `visitID` varchar(50) NOT NULL,
   `visitDate` date NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -41,10 +42,10 @@ CREATE TABLE `VisitUserTheater` (
 -- Dumping data for table `VisitUserTheater`
 --
 
-LOCK TABLES `VisitUserTheater` WRITE;
-/*!40000 ALTER TABLE `VisitUserTheater` DISABLE KEYS */;
-INSERT INTO `VisitUserTheater` VALUES ('1','2010-03-22','georgep','Main Movies','EZ Theater Company'),('2','2010-03-22','calcwizard','Main Movies','EZ Theater Company'),('3','2010-03-25','calcwizard','Star Movies','EZ Theater Company'),('4','2010-03-25','imready','Star Movies','EZ Theater Company'),('5','2010-03-20','calcwizard','ML Movies','AI Theater Company');
-/*!40000 ALTER TABLE `VisitUserTheater` ENABLE KEYS */;
+LOCK TABLES `UserVisitTheater` WRITE;
+/*!40000 ALTER TABLE `UserVisitTheater` DISABLE KEYS */;
+INSERT INTO `UserVisitTheater` VALUES ('1','2010-03-22','georgep','Main Movies','EZ Theater Company'),('2','2010-03-22','calcwizard','Main Movies','EZ Theater Company'),('3','2010-03-25','calcwizard','Star Movies','EZ Theater Company'),('4','2010-03-25','imready','Star Movies','EZ Theater Company'),('5','2010-03-20','calcwizard','ML Movies','AI Theater Company');
+/*!40000 ALTER TABLE `UserVisitTheater` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
