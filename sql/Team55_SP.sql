@@ -76,17 +76,27 @@ CREATE definer = `root`@`localhost` PROCEDURE `manager_filter_th`(IN i_manUserna
 BEGIN
     DROP TABLE IF EXISTS ManFilterTh;
     CREATE TABLE ManFilterTh
-	SELECT DISTINCT movName, duration AS movDuration, movReleaseDate, movPlayDate
-    FROM movieplay
-		NATURAL JOIN
-        movie
+	SELECT DISTINCT m.movName, duration AS movDuration, m.movReleaseDate, movPlayDate
+    FROM movieplay as p
+		RIGHT OUTER JOIN
+        movie as m
+        ON p.movName = m.movName
 	WHERE
-		(movName = i_movName OR i_movName = "ALL" OR i_movName = "") AND
+		(m.movName = i_movName OR i_movName = "ALL" OR i_movName = "") AND
         (i_minMovDuration IS NULL OR duration >= i_minMovDuration) AND
         (i_maxMovDuration IS NULL OR duration <= i_maxMovDuration) AND
         (i_minMovPlayDate IS NULL OR movPlayDate >= i_minMovPlayDate) AND
         (i_maxMovPlayDate IS NULL OR movPlayDate <= i_maxMovPlayDate) AND 
-		(comName IN (SELECT comName FROM theater WHERE manUsername = "fatherAI"));
+		(thName IN (SELECT thName FROM theater WHERE manUsername = i_manUsername)) 
+        AND (i_includedNotPlay != TRUE OR i_includedNotPlay = NULL OR i_includedNotPlay = FALSE)
+UNION
+(SELECT movName, duration AS movDuration, movReleaseDate, NULL AS movPlayDate
+FROM movie
+WHERE movName NOT IN 
+	(SELECT movName 
+	FROM movieplay 
+	WHERE thName IN 
+		(SELECT thName FROM theater WHERE manUsername = i_manUsername)));
 END$$
 DELIMITER ;
 
