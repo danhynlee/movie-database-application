@@ -97,9 +97,15 @@ class CreateTheaterForm(FlaskForm):
                 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'Other')
     state = SelectField('State', choices=[(state, state) for state in STATES])
     zipcode = StringField('Zipcode', validators=[DataRequired(), Length(min=5, max=5, message="Zipcode must be 5 digits.")])
-    capacity = IntegerField('Capacity')
+    capacity = IntegerField('Capacity', validators=[DataRequired()])
     create = SubmitField('Create')
     back = SubmitField('Back')
+
+class CreateMovieForm(FlaskForm):
+    movName = StringField('Name', validators=[DataRequired()])
+    duration = IntegerField('Duration', validators=[DataRequired()])
+    releaseDate = DateField('Release Date', validators=[DataRequired()])
+    create = SubmitField('Create')
 
 class VisitHistoryForm(FlaskForm):
     company = SelectField('Company', choices = [('all','--All--'), ('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
