@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, CreateTheaterForm, CreateMovieForm, VisitHistoryForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, CreateTheaterForm, CreateMovieForm, TheaterOverviewForm, VisitHistoryForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 
@@ -500,6 +500,151 @@ def create_movie():
         flash(f'Movie successfully created.' , 'success')
     return render_template("create_movie.html", title="Create Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form)
 
+@app.route('/theater_overview', methods=['GET', 'POST'])
+def theater_overview():
+    form = TheaterOverviewForm()
+
+    movies = all_movies()
+
+    cur = mysql.connection.cursor()
+
+    if form.filter.data:
+        movName = form.movName.data
+
+
+        movMinDuration = 0 if not form.movMinDuration.data else form.movMinDuration.data
+        movMaxDuration = 100000000 if not form.movMaxDuration.data else form.movMaxDuration.data
+        if movMinDuration > movMaxDuration:
+            flash("Minimum number cannot be greater than maximum", 'danger')
+            return redirect(url_for('manage_company', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form))
+        
+        movReleaseDateStart = form.movReleaseDateStart.data
+        movReleaseDateEnd = form.movReleaseDateEnd.data
+        movPlayDateStart = form.movPlayDateStart.data
+        movPlayDateEnd = form.movPlayDateEnd.data
+        notPlayed = form.notPlayed.data
+
+        filtered = []
+        if not notPlayed:
+            if movName == "":
+                for mov in movies:
+                    if movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                        if mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart and mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] >= movPlayDateStart:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                        if mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                        if mov['movPlayDate'] <= movPlayDateEnd and mov['movPlayDate'] >= movPlayDateStart:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                        if mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                        if mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] >= movPlayDateStart:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                        if mov['movPlayDate'] <= movPlayDateEnd and mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                        if mov['movPlayDate'] <= movPlayDateEnd:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                        if mov['movPlayDate'] >= movPlayDateStart:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                        if mov['movReleaseDate'] <= movReleaseDateEnd:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                        filtered.append(mov)
+                return render_template('theater_overview.html', title="Theater Overview", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=filtered)
+            else:
+                for mov in movies:
+                    if mov['movName'] == movName:
+                        if movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                            if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                            if mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                            if mov['movReleaseDate'] >= movReleaseDateStart and mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                            if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                            if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd and mov['movPlayDate'] >= movPlayDateStart:
+                                filtered.append(mov)
+                        elif movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                            if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and movPlayDateEnd:
+                            if mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                            if mov['movPlayDate'] <= movPlayDateEnd and mov['movPlayDate'] >= movPlayDateStart:
+                                filtered.append(mov)
+                        elif movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                            if mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                            if mov['movPlayDate'] >= movPlayDateStart and mov['movPlayDate'] >= movPlayDateStart:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                            if mov['movPlayDate'] <= movPlayDateEnd and mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and movPlayDateEnd:
+                            if mov['movPlayDate'] <= movPlayDateEnd:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and not movReleaseDateEnd and movPlayDateStart and not movPlayDateEnd:
+                            if mov['movPlayDate'] >= movPlayDateStart:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                            if mov['movReleaseDate'] <= movReleaseDateEnd:
+                                filtered.append(mov)
+                        elif movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                            if mov['movReleaseDate'] >= movReleaseDateStart:
+                                filtered.append(mov)
+                        elif not movReleaseDateStart and not movReleaseDateEnd and not movPlayDateStart and not movPlayDateEnd:
+                            filtered.append(mov)
+                return render_template('theater_overview.html', title="Theater Overview", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=filtered)
+        else:
+            for mov in movies:
+                if mov['movPlayDate'] == None:
+                    if movReleaseDateStart and movReleaseDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart and mov['movReleaseDate'] <= movReleaseDateEnd:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and movReleaseDateEnd:
+                        if mov['movReleaseDate'] <= movReleaseDateEnd:
+                            filtered.append(mov)
+                    elif movReleaseDateStart and not movReleaseDateEnd:
+                        if mov['movReleaseDate'] >= movReleaseDateStart:
+                            filtered.append(mov)
+                    elif not movReleaseDateStart and not movReleaseDateEnd:
+                        filtered.append(mov)
+            return render_template('theater_overview.html', title="Theater Overview", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=filtered)
+                
+
+    return render_template("theater_overview.html", title="Theater Overview", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movies)
 
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
