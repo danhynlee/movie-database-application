@@ -121,7 +121,7 @@
                     <br>
                     <div class="form-group">
                         {{ form.filter(class="btn btn-outline-info") }}
-                        <a class="btn btn-outline-info float-right mr-3" href="#">Create Theater</a>
+                        <a class="btn btn-outline-info float-right mr-3" href="{{ url_for('create_theater', userType=userType, username=username) }}">Create Theater</a>
                         {{ form.detail(class="btn btn-outline-info float-right mr-3") }}
                     </div>
                     <div class="form-group">
