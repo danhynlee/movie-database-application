@@ -1,8 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, VisitHistoryForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, VisitHistoryForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
-# from functools import wraps
 
 
 app = Flask(__name__)
@@ -348,6 +347,75 @@ def manage_user():
             return redirect(url_for('manage_user', userType=request.args.get('userType'), username=request.args.get('username')))
     return render_template('manage_user.html', title="Manage User", userType=request.args.get('userType'), username=request.args.get('username'), form=form, users=users)
 
+@app.route('/manage_company', methods=['GET', 'POST'])
+def manage_company():
+    form = ManageCompanyForm()
+
+    companyList = all_companies()
+
+    cur = mysql.connection.cursor()
+
+    for company in companyList:
+        cur.execute("SELECT COUNT(DISTINCT thCity, thState) FROM THEATER WHERE comName=%s", (company['comName'],))
+        company['cityNum'] = cur.fetchone()['COUNT(DISTINCT thCity, thState)']
+
+        cur.execute("SELECT COUNT(*) FROM THEATER WHERE comName=%s", (company['comName'],))
+        company['theaterNum'] = cur.fetchone()['COUNT(*)']
+
+        cur.execute("SELECT COUNT(*) FROM MANAGER WHERE comName=%s", (company['comName'],))
+        company['employeeNum'] = cur.fetchone()['COUNT(*)']
+
+    mysql.connection.commit()
+
+    cur.close()
+
+    if form.filter.data:
+        company = form.company.data
+
+        minCityNum = 0 if not form.minCityNum.data else form.minCityNum.data
+        maxCityNum = 100000000 if not form.maxCityNum.data else form.maxCityNum.data
+        if minCityNum > maxCityNum:
+            flash("Minimum number cannot be greater than maximum", 'danger')
+            return redirect(url_for('manage_company', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form))
+        minTheaters = 0 if not form.minTheaters.data else form.minTheaters.data
+        maxTheaters = 100000000 if not form.maxTheaters.data else form.maxTheaters.data
+        if minTheaters > maxTheaters:
+            flash("Minimum number cannot be greater than maximum", 'danger')
+            return redirect(url_for('manage_company', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form))
+        minEmployeeNum = 0 if not form.minEmployeeNum.data else form.minEmployeeNum.data
+        maxEmployeeNum = 100000000 if not form.maxEmployeeNum.data else form.maxEmployeeNum.data
+        if minEmployeeNum > maxEmployeeNum:
+            flash("Minimum number cannot be greater than maximum", 'danger')
+            return redirect(url_for('manage_company', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form))
+
+        filtered = []
+        for co in companyList:
+            if company == 'all':
+                if co['cityNum'] >= minCityNum and co['cityNum'] <= maxCityNum and co['theaterNum'] >= minTheaters and co['theaterNum'] <= maxTheaters and co['employeeNum'] >= minEmployeeNum and co['employeeNum'] <= maxEmployeeNum:
+                    filtered.append(co)
+            else:
+                if co['comName'] == company:
+                    if co['cityNum'] >= minCityNum and co['cityNum'] <= maxCityNum and co['theaterNum'] >= minTheaters and co['theaterNum'] <= maxTheaters and co['employeeNum'] >= minEmployeeNum and co['employeeNum'] <= maxEmployeeNum:
+                        filtered.append(co)
+
+        return render_template('manage_company.html', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form, companyList=filtered)
+
+    elif form.detail.data:
+        if 'comName' not in request.form:
+            flash('Please select a company.', 'danger')
+            return render_template('manage_company.html', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form, companyList=companyList)
+
+        target_company = request.form['comName']
+
+        return redirect(url_for('company_detail', userType=request.args.get('userType'), username=request.args.get('username'), target_company=target_company))
+
+    return render_template('manage_company.html', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form, companyList=companyList)
+
+@app.route('/company_detail/<string:target_company>', methods=['GET', 'POST'])
+def company_detail(target_company):
+
+
+    return render_template("company_detail.html", title="Company Detail", userType=request.args.get('userType'), username=request.args.get('username'), company=target_company)
 
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
@@ -361,10 +429,6 @@ def visit_history():
 
 
     return render_template("visit_history.html", title="Visit History", userType=request.args.get('userType'), username=request.args.get('username'), form=form)
-
-
-
-
 
 
 @app.route('/remove_cc/<string:credit_card>', methods=['GET', 'POST'])
