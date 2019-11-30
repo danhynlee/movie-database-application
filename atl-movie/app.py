@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, CreateTheaterForm, VisitHistoryForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, CreateTheaterForm, CreateMovieForm, VisitHistoryForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 
@@ -472,8 +472,33 @@ def create_theater():
     
     return render_template("create_theater.html", title="Create Theater", userType=request.args.get('userType'), username=request.args.get('username'), form=form, managers=managers)
 
+@app.route('/create_movie', methods=['GET', 'POST'])
+def create_movie():
+    form = CreateMovieForm()
 
+    if form.validate_on_submit() and request.method == 'POST':
+        movName = form.movName.data
+        duration = form.duration.data
+        releaseDate = form.releaseDate.data
 
+        cur = mysql.connection.cursor()
+
+        cur.execute("SELECT COUNT(*) FROM Movie WHERE movName=%s and movReleaseDate=%s", (movName, releaseDate))
+        validData = cur.fetchone()
+        validMovie = validData['COUNT(*)']
+
+        if validMovie != 0:
+            flash(f'There exists a movie with the same name and release date.' , 'danger')
+            return redirect(url_for('create_movie', userType=request.args.get('userType'), username=request.args.get('username')))
+        
+        cur.execute("INSERT INTO Movie(movName, movReleaseDate, duration) VALUES(%s, %s, %s)", (movName, releaseDate, duration))
+
+        mysql.connection.commit()
+
+        cur.close()
+
+        flash(f'Movie successfully created.' , 'success')
+    return render_template("create_movie.html", title="Create Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form)
 
 
 @app.route('/visit_history', methods=['GET', 'POST'])
