@@ -431,6 +431,17 @@ def all_users():
     cur.close()
     return users
 
+def all_companies():
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT comName FROM Company")
+    companyData = cur.fetchall()
+    companies = [dictCo for dictCo in companyData]
+
+    for company in companies:
+        company['displayCom'] = company['comName'].replace(" Theater Company", "")
+    return companies
+
 
 if  __name__ == '__main__':
     app.run(debug=True)
