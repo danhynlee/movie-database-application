@@ -5,7 +5,7 @@ DELIMITER $$
 create definer = `root`@`localhost` PROCEDURE `user_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50))
 BEGIN
 		INSERT INTO user (username, password, firstname, lastname, status) 
-        VALUES (i_username, MD5(i_password), i_firstname, i_lastname, "pending");
+        VALUES (i_username, MD5(i_password), i_firstname, i_lastname, "Pending");
 END$$
 DELIMITER ;
 
@@ -15,7 +15,7 @@ delimiter $$
 create definer = `root`@`localhost` procedure `customer_only_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50))
 begin
         insert into user(username, password, firstname, lastname, status) 
-        values (i_username, md5(i_password), i_firstname, i_lastname, "pending");
+        values (i_username, md5(i_password), i_firstname, i_lastname, "Pending");
         insert into customer (username) values (i_username);
 end$$
 delimiter ;
@@ -35,7 +35,7 @@ delimiter $$
 create definer = `root`@`localhost` procedure `manager_only_register`(in i_username varchar(50), in i_password varchar(50), in i_firstname varchar(50), in i_lastname varchar(50), in i_comName varchar(50), in i_empStreet varchar(50), in i_empCity varchar(50), in i_empState varchar(50), i_empZipcode varchar(50))
 begin
 	insert into user(username, password, firstname, lastname, status) 
-    values (i_username, md5(i_password), i_firstname, i_lastname, "pending");
+    values (i_username, md5(i_password), i_firstname, i_lastname, "Pending");
     insert into employee(username) values (i_username);
     insert into manager(username, comName, manStreet, manCity, manState, manZipcode) 
     values (i_username, i_comName, i_empstreet, i_empCity, i_empState, i_empZipcode);
@@ -50,7 +50,7 @@ delimiter $$
 create definer = `root`@`localhost` procedure `manager_customer_register`(in i_username varchar(50), in i_password varchar(50), in i_firstname varchar(50), in i_lastname varchar(50), in i_comName varchar(50), in i_empStreet varchar(50), in i_empCity varchar(50), in i_empState varchar(50), i_empZipcode varchar(50))
 begin
 		insert into user(username, password, firstname, lastname, status) 
-		values (i_username, md5(i_password), i_firstname, i_lastname, "pending");
+		values (i_username, md5(i_password), i_firstname, i_lastname, "Pending");
 		insert into employee(username) values (i_username);
         insert into manager(username, comName, manStreet, manCity, manState, manZipcode) 
 		values (i_username, i_comName, i_empstreet, i_empCity, i_empState, i_empZipcode);
