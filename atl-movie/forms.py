@@ -124,6 +124,20 @@ class ScheduleMovieForm(FlaskForm):
     movPlayDate = DateField('Play Date', validators=[DataRequired()])
     add = SubmitField('Add')
 
+class ExploreMovieForm(FlaskForm):
+    company = SelectField('Company', choices = [('ALL','--All--'), ('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')])
+    city = StringField('City')
+    STATES = ('AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 
+                'HI', 'ID', 'IL', 'IN', 'IO', 'KS', 'KY', 'LA', 'ME', 'MD', 
+                'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 
+                'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 
+                'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY')
+    state = SelectField('State', choices=[('ALL', '--All--')] + [(state, state) for state in STATES])
+    movPlayDateStart = DateField('Play Start')
+    movPlayDateEnd = DateField('Play End')
+    filter = SubmitField('Filter')
+    view = SubmitField('View')
+
 class VisitHistoryForm(FlaskForm):
     company = SelectField('Company', choices = [('all','--All--'), ('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
     fromDate = DateField('From')
