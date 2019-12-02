@@ -447,8 +447,15 @@ def manage_company():
             return render_template('manage_company.html', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form, companyList=companyList)
 
         target_company = request.form['comName']
-
-        return redirect(url_for('company_detail', userType=request.args.get('userType'), username=request.args.get('username'), target_company=target_company))
+        return redirect(url_for('company_detail', title="Company Detail", userType=request.args.get('userType'), username=request.args.get('username'), form=form, companyList=companyList, target_company=target_company))
+    
+    elif form.create.data:
+        if 'comName' not in request.form:
+            flash('Please select a company.', 'danger')
+            return render_template('manage_company.html', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form, companyList=companyList)
+        
+        target_company = request.form['comName']
+        return redirect(url_for('create_theater', userType=request.args.get('userType'), username=request.args.get('username'), target_company=target_company))
 
     return render_template('manage_company.html', title="Manage Company", userType=request.args.get('userType'), username=request.args.get('username'), form=form, companyList=companyList)
 
