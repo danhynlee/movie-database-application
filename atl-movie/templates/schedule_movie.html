@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+            <legend class="border-bottom mb-4">Schedule Movie</legend>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="movName" class="form-control-label">Name</label>
+                                <select name="movName" class="form-control form-control-lg" id="movName" required>
+                                    {% for mov in movies %}
+                                        <option name="movName" value='{{ mov['movName'] }}'>{{ mov['movName'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between">
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.movReleaseDate.label(class="form-control-label") }}
+                                {% if form.movReleaseDate.errors %}
+                                    {{ form.movReleaseDate(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.movReleaseDate.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.movReleaseDate(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.movPlayDate.label(class="form-control-label") }}
+                                {% if form.movPlayDate.errors %}
+                                    {{ form.movPlayDate(class="form-control form-control-lg is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.movPlayDate.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.movPlayDate(class="form-control form-control-lg") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="row justify-content-between">
+                    <div class="col-4">
+                        <div class="form-group">
+                            {{ form.add(class="btn btn-outline-info") }}
+                        </div>
+                    </div>
+                    <div class="col-4 text-right">
+                        <a class="btn btn-outline-info mb-3" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
