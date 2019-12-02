@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+            <legend class="border-bottom mb-4">View History</legend>
+            <table id="table" data-toggle="table" data-height="300">
+                <thead>
+                    <tr>
+                        <th scope="col">Movie
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">Theater
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">Company
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">Card #
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                        <th scope="col">View Date
+                            <div class="input-group-append" style="float:right"></div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for view in history %}
+                        <tr>
+                            <td>
+                                <label for="movName">{{ view['movName'] }}</label>
+                            </td>
+                            <td>
+                                <label for="thName">{{ view['thName'] }}</label>
+                            </td>
+                            <td>
+                                <label for="comName">{{ view['comName'] }}</label>
+                            </td>
+                            <td>
+                                <label for="creditCardNum">{{ view['creditCardNum'] }}</label>
+                            </td>
+                            <td>
+                                <label for="movPlayDate">{{ view['movPlayDate'] }}</label>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-outline-info mb-3" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="content-section">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Visit History</legend>
+                <div class="row justify-content-center">
+                    <div class="form-group col-3">
+                        {{ form.company.label(class="form-control-label") }}
+                        {% if form.company.errors %}
+                            {{ form.company(class="form-control form-control-lg is-invalid") }}
+                            <div style="color:red">
+                                {% for error in form.company.errors %}
+                                <span style="font-size:13px">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.company(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="form-control-label" style="float:right; padding-top: 44px">Visit Date</label>
+                    </div>
+                    <div class="form-group col-3">
+                        {{ form.fromDate.label(class="form-control-label") }}
+                        {% if form.fromDate.errors %}
+                            {{ form.fromDate(class="form-control form-control-lg is-invalid") }}
+                            <div style="color:red">
+                                {% for error in form.fromDate.errors %}
+                                <span style="font-size:13px">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.fromDate(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-3">
+                        {{ form.toDate.label(class="form-control-label") }}
+                        {% if form.toDate.errors %}
+                            {{ form.toDate(class="form-control form-control-lg is-invalid") }}
+                            <div style="color:red">
+                                {% for error in form.toDate.errors %}
+                                <span style="font-size:13px">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.toDate(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.filter(class="btn btn-outline-info") }}
+                </div>
+                <legend class="border-bottom mb-4"></legend>
+                <div id="visit_history">
+                    <table id="table" data-toggle="table" data-height="300">
+                        <thead>
+                            <tr>
+                                <th scope="col">Theater
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col">Address
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col">Company
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                                <th scope="col">Visit Date
+                                    <div class="input-group-append" style="float:right"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for visit in history %}
+                                <tr>
+                                    <td>
+                                        <label for="thName">{{ visit['thName'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="address">{{ visit['address'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="comName">{{ visit['comDisplay'] }}</label>
+                                    </td>
+                                    <td>
+                                        <label for="visitDate">{{ visit['visitDate'] }}</label>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <a class="btn btn-outline-info mb-3" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+            </fieldset>
+        </form>
+    </div>
+
+{% endblock%}
