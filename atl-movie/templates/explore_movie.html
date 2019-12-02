@@ -1,0 +1,186 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+            <legend class="border-bottom mb-4">Explore Movie</legend>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="movName" class="form-control-label">Name</label>
+                                <select name="movName" class="form-control form-control-md" id="movName" required>
+                                    <option name="movName" value="ALL" selected>--All--</option>
+                                    {% for mov in movies %}
+                                        <option name="movName" value="{{ mov['movName'] }}">{{ mov['movName'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.company.label(class="form-control-label", style="padding-right:30px") }}
+                                {% if form.company.errors %}
+                                    {{ form.company(class="form-control form-control-md is-invalid") }}
+                                    <div style="color:red">
+                                        {% for error in form.company.errors %}
+                                        <span style="font-size:13px">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.company(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.city.label(class="form-control-label") }}
+                                {% if form.city.errors %}
+                                    {{ form.city(class="form-control form-control-md is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.city.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.city(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.state.label(class="form-control-label", style="padding-right:30px") }}
+                                {% if form.state.errors %}
+                                    {{ form.state(class="form-control form-control-md is-invalid") }}
+                                    <div style="color:red">
+                                        {% for error in form.state.errors %}
+                                        <span style="font-size:13px">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.state(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label class='form-control-label' style="padding-right:52px">Movie Play Date</label>
+                                        {% if form.movPlayDateStart.errors %}
+                                            {{ form.movPlayDateStart(class="form-control form-control-md is-invalid") }}
+                                            <div style="color:red">
+                                                {% for error in form.movPlayDateStart.errors %}
+                                                <span style="font-size:13px">{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.movPlayDateStart(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label class='form-control-label' style="padding-right:15px; padding-left:15px">-</label>
+                                        {% if form.movPlayDateEnd.errors %}
+                                            {{ form.movPlayDateEnd(class="form-control form-control-md is-invalid") }}
+                                            <div style="color:red">
+                                                {% for error in form.movPlayDateEnd.errors %}
+                                                <span style="font-size:13px">{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.movPlayDateEnd(class="form-control form-control-md") }}
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-group" style="padding-left: 50px">
+                                        {{ form.filter(class="btn btn-outline-info") }}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <table class="table" data-toggle="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Movie
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col">Theater
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col">Address
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col">Company
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col">Play Date
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mov in movies %}
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="namemovie" value="{{ mov['movName'] }}">
+                                            <input type="hidden" name="release" value="{{ mov['movReleaseDate'] }}">
+                                            <input type="hidden" name="theater" value="{{ mov['thName'] }}">
+                                            <input type="hidden" name="company" value="{{ mov['comName'] }}">
+                                            <input type="hidden" name="play" value="{{ mov['movPlayDate'] }}">
+
+                                            <label for="movieView" style="padding-left: 10px">{{ mov['movName'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="thNum">{{ mov['thName'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="address">{{ mov['address'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="comName">{{ mov['comDisplay'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="movPlayDate">{{ mov['movPlayDate'] }}</label>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="form-inline">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    {{ form.view(class="btn btn-outline-info text-right") }}
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <select name="creditCardNum" class="form-control form-control-md" id="creditCardNum" required>
+                                        {% for cc in creditCards %}
+                                            <option name="creditCardNum" value="{{ cc['creditCardNum'] }}">{{ cc['creditCardNum'] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <a class="btn btn-outline-info" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+{% endblock%}
