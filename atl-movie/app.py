@@ -815,6 +815,63 @@ def view_history():
 
     return render_template("view_history.html", title="View History", userType=request.args.get('userType'), username=request.args.get('username'), history=userDetails)
 
+@app.route('/explore_theater', methods=['GET', 'POST'])
+def explore_theater():
+    form = ExploreTheaterForm()
+    cur = mysql.connection.cursor()
+
+    cur.execute("CALL user_filter_th('ALL', 'ALL', '', 'ALL')")
+    cur.execute("SELECT * FROM UserFilterTh")
+    thDetails = cur.fetchall()
+    for th in thDetails:
+        th['address'] = f"{th['thStreet']}, {th['thCity']}, {th['thState']} {th['thZipcode']}"
+        th['comDisplay'] = th['comName'].replace(" Theater Company", "")
+
+    if form.filter.data:
+        theater = request.form.get('thName')
+        company = form.company.data
+        city = form.city.data
+        state = form.state.data
+
+        filtered = []
+        cur.execute("CALL user_filter_th(%s, %s, %s, %s)", (theater, company, city, state))
+        cur.execute("SELECT * FROM UserFilterTh")
+        filtered = cur.fetchall()
+        for th in filtered:
+            th['address'] = f"{th['thStreet']}, {th['thCity']}, {th['thState']} {th['thZipcode']}"
+            th['comDisplay'] = th['comName'].replace(" Theater Company", "")
+        
+        mysql.connection.commit()
+
+        cur.close()
+
+        return render_template("explore_theater.html", title="Explore Theater", userType=request.args.get('userType'), username=request.args.get('username'), form=form, theaters=filtered)
+    
+    elif form.logvisit.data:
+        username = request.args['username']
+        visit = form.visitDate.data
+        theaterName = request.form.get('theaterName')
+        companyName = request.form.get('companyName')
+
+        if not visit:
+            flash('Please enter a valid date.', 'danger')
+            return redirect(url_for('explore_theater', title="Explore Theater", userType=request.args.get('userType'), username=request.args.get('username'), form=form, theaters=thDetails))
+
+        cur.execute("CALL user_visit_th(%s, %s, %s, %s)", (theaterName, companyName, visit, username))
+        flash('Successfully visited the theater.', 'success')
+
+        mysql.connection.commit()
+
+        cur.close()
+
+        return render_template("explore_theater.html", title="Explore Theater", userType=request.args.get('userType'), username=request.args.get('username'), form=form, theaters=thDetails)
+
+    mysql.connection.commit()
+
+    cur.close()
+
+    return render_template("explore_theater.html", title="Explore Theater", userType=request.args.get('userType'), username=request.args.get('username'), form=form, theaters=thDetails)
+
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
     form = VisitHistoryForm()
