@@ -700,6 +700,38 @@ def theater_overview():
 
     return render_template("theater_overview.html", title="Theater Overview", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movies)
 
+@app.route('/schedule_movie', methods=['GET', 'POST'])
+def schedule_movie():
+    form = ScheduleMovieForm()
+    username = request.args['username']
+    theater = request.args['theaterMng']
+
+    cur = mysql.connection.cursor()
+    
+    cur.execute("CALL manager_filter_th(%s, '', NULL, NULL, NULL, NULL, NULL, NULL, FALSE)", (username,))
+    cur.execute("SELECT * FROM ManFilterTh")
+    movies = cur.fetchall()
+
+    if form.validate_on_submit() and request.method == 'POST':
+        movReleaseDate = form.movReleaseDate.data
+        movPlayDate = form.movPlayDate.data
+        movName = request.form.get('movName')
+
+        if movPlayDate < movReleaseDate:
+            flash(f'Play date cannot be before the release date.', 'danger')
+            return redirect(url_for('schedule_movie', userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movies))
+
+        cur.execute("CALL manager_schedule_mov(%s, %s, %s, %s)", (username, movName, movReleaseDate, movPlayDate))
+
+        flash(f'Movie successfully schedule!', 'success')
+
+    mysql.connection.commit()
+
+    cur.close()
+
+    return render_template("schedule_movie.html", title="Schedule Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movies)
+
+@app.route('/explore_movie', methods=['GET', 'POST'])
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
     form = VisitHistoryForm()
