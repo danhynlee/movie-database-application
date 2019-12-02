@@ -278,7 +278,7 @@ DELIMITER $$
 CREATE definer = `root`@`localhost` PROCEDURE `manager_schedule_mov`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_movReleaseDate DATE, IN i_movPlayDate DATE)
 BEGIN
 		INSERT INTO movieplay (movPlayDate, movName, movReleaseDate, thName, comName)
-		SELECT i_movPlayDate, i_movName, i_movReleaseDate, theater.thName, theater.ComName
+		SELECT i_movPlayDate, i_movName, i_movReleaseDate, theater.thName, theater.comName
 		FROM theater
 		WHERE manUsername = i_manUsername AND
         NOT EXISTS (SELECT 1
