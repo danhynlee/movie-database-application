@@ -800,6 +800,21 @@ def explore_movie():
         return redirect(url_for('explore_movie', title="Explore Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movieDetails, creditCards=ccDetails))
 
     return render_template("explore_movie.html", title="Explore Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movieDetails, creditCards=ccDetails)
+
+@app.route('/view_history', methods=['GET', 'POST'])
+def view_history():
+    username = request.args['username']
+    cur = mysql.connection.cursor()
+
+    cur.execute("CALL customer_view_history(%s)", (username,))
+    userDetails = cur.fetchall()
+
+    mysql.connection.commit()
+
+    cur.close()
+
+    return render_template("view_history.html", title="View History", userType=request.args.get('userType'), username=request.args.get('username'), history=userDetails)
+
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
     form = VisitHistoryForm()
