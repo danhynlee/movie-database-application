@@ -1,7 +1,8 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session
-from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, CreateTheaterForm, CreateMovieForm, TheaterOverviewForm, VisitHistoryForm
+from forms import UserRegistrationForm, CustomerRegistrationForm, ManagerRegistrationForm, ManagerCustomerRegistrationForm, LoginForm, CreditCardForm, ManageUserForm, ManageCompanyForm, CreateTheaterForm, CreateMovieForm, TheaterOverviewForm, ScheduleMovieForm, ExploreMovieForm, ExploreTheaterForm, VisitHistoryForm
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
+import datetime, json, re
 
 
 app = Flask(__name__)
@@ -315,6 +316,7 @@ def dashboard():
         cur.close()
 
         return render_template('dashboard.html', title='Dashboard', userType=request.args.get('userType'), username=username, form=form, creditCards=creditCards)
+
     
     return render_template('dashboard.html', title='Dashboard', userType=request.args.get('userType'), username=username, form=form)
 
@@ -877,14 +879,40 @@ def visit_history():
     form = VisitHistoryForm()
 
     username = request.args['username']
-    userType = request.args['userType']
 
     cur = mysql.connection.cursor()
 
+    cur.execute("CALL user_filter_visitHistory(%s, NULL, NULL)", (username,))
+    cur.execute("SELECT * FROM UserVisitHistory")
+    visitHistoryData = cur.fetchall()
+    for th in visitHistoryData:
+        th['address'] = f"{th['thStreet']}, {th['thCity']}, {th['thState']} {th['thZipcode']}"
+        th['comDisplay'] = th['comName'].replace(" Theater Company", "")
+    
+    if form.filter.data:
+        company = form.company.data
+        visitFrom = form.fromDate.data
+        visitTo = form.toDate.data
 
+        filtered = []
+        cur.execute("CALL user_filter_visitHistory(%s, %s, %s)", (username, visitFrom, visitTo))
+        cur.execute("SELECT * FROM UserVisitHistory")
+        visitData = cur.fetchall()
+        for th in visitData:
+            th['address'] = f"{th['thStreet']}, {th['thCity']}, {th['thState']} {th['thZipcode']}"
+            th['comDisplay'] = th['comName'].replace(" Theater Company", "")
+            if th['comName'] == company or company == 'all':
+                filtered.append(th)
 
-    return render_template("visit_history.html", title="Visit History", userType=request.args.get('userType'), username=request.args.get('username'), form=form)
+        mysql.connection.commit()
 
+        cur.close()
+
+        return render_template("visit_history.html", title="Visit History", userType=request.args.get('userType'), username=request.args.get('username'), form=form, history=filtered)
+
+    flash(f'{visitHistoryData}', 'success')
+
+    return render_template("visit_history.html", title="Visit History", userType=request.args.get('userType'), username=request.args.get('username'), form=form, history=visitHistoryData)
 
 @app.route('/remove_cc/<string:credit_card>', methods=['GET', 'POST'])
 def remove_cc(credit_card):
@@ -977,12 +1005,16 @@ def all_managers():
     cur.close()
     return managers
 
-def all_movies():
+def all_movies(theater=None):
     cur = mysql.connection.cursor()
 
     movies = []
-    cur.execute("SELECT movPlayDate, movName, movReleaseDate FROM MoviePlay")
-    movieData = cur.fetchall()
+    if theater:
+        cur.execute("SELECT movPlayDate, movName, movReleaseDate FROM MoviePlay WHERE thName=%s", (theater,))
+        movieData = cur.fetchall()
+    else:
+        cur.execute("SELECT movPlayDate, movName, movReleaseDate FROM MoviePlay")
+        movieData = cur.fetchall()
 
     for movie in movieData:
         movie['duration'] = 0
