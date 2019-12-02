@@ -5,7 +5,7 @@ DELIMITER $$
 create definer = `root`@`localhost` PROCEDURE `user_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50))
 BEGIN
 		INSERT INTO user (username, password, firstname, lastname, status) 
-        VALUES (i_username, MD5(i_password), i_firstname, i_lastname, "Pending");
+        VALUES (i_username, MD5(i_password), i_firstname, i_lastname, "pending");
 END$$
 DELIMITER ;
 
@@ -15,7 +15,7 @@ delimiter $$
 create definer = `root`@`localhost` procedure `customer_only_register`(IN i_username VARCHAR(50), IN i_password VARCHAR(50), IN i_firstname VARCHAR(50), IN i_lastname VARCHAR(50))
 begin
         insert into user(username, password, firstname, lastname, status) 
-        values (i_username, md5(i_password), i_firstname, i_lastname, "Pending");
+        values (i_username, md5(i_password), i_firstname, i_lastname, "pending");
         insert into customer (username) values (i_username);
 end$$
 delimiter ;
@@ -35,7 +35,7 @@ delimiter $$
 create definer = `root`@`localhost` procedure `manager_only_register`(in i_username varchar(50), in i_password varchar(50), in i_firstname varchar(50), in i_lastname varchar(50), in i_comName varchar(50), in i_empStreet varchar(50), in i_empCity varchar(50), in i_empState varchar(50), i_empZipcode varchar(50))
 begin
 	insert into user(username, password, firstname, lastname, status) 
-    values (i_username, md5(i_password), i_firstname, i_lastname, "Pending");
+    values (i_username, md5(i_password), i_firstname, i_lastname, "pending");
     insert into employee(username) values (i_username);
     insert into manager(username, comName, manStreet, manCity, manState, manZipcode) 
     values (i_username, i_comName, i_empstreet, i_empCity, i_empState, i_empZipcode);
@@ -50,7 +50,7 @@ delimiter $$
 create definer = `root`@`localhost` procedure `manager_customer_register`(in i_username varchar(50), in i_password varchar(50), in i_firstname varchar(50), in i_lastname varchar(50), in i_comName varchar(50), in i_empStreet varchar(50), in i_empCity varchar(50), in i_empState varchar(50), i_empZipcode varchar(50))
 begin
 		insert into user(username, password, firstname, lastname, status) 
-		values (i_username, md5(i_password), i_firstname, i_lastname, "Pending");
+		values (i_username, md5(i_password), i_firstname, i_lastname, "pending");
 		insert into employee(username) values (i_username);
         insert into manager(username, comName, manStreet, manCity, manState, manZipcode) 
 		values (i_username, i_comName, i_empstreet, i_empCity, i_empState, i_empZipcode);
@@ -278,7 +278,7 @@ DELIMITER $$
 CREATE definer = `root`@`localhost` PROCEDURE `manager_schedule_mov`(IN i_manUsername VARCHAR(50), IN i_movName VARCHAR(50), IN i_movReleaseDate DATE, IN i_movPlayDate DATE)
 BEGIN
 		INSERT INTO movieplay (movPlayDate, movName, movReleaseDate, thName, comName)
-		SELECT i_movPlayDate, i_movName, i_movReleaseDate, theater.thName, theater.comName
+		SELECT i_movPlayDate, i_movName, i_movReleaseDate, theater.thName, theater.ComName
 		FROM theater
 		WHERE manUsername = i_manUsername AND
         NOT EXISTS (SELECT 1
@@ -314,9 +314,11 @@ BEGIN
 		INSERT INTO CustomerViewMovie (creditCardNum, movPlayDate, movName, movReleaseDate, thName, comName) 
         SELECT i_creditCardNum, i_movPlayDate, i_movName, i_movReleaseDate, i_thName, i_comName
         FROM CustomerViewMovie
-        WHERE NOT EXISTS (SELECT 1
+        WHERE (SELECT Count(*)<1 FROM movie where movName = i_movName AND movReleaseDate = i_movReleaseDate) AND
+        (SELECT Count(*)<1 FROM moviePlay where movName = i_movName AND movReleaseDate = i_movReleaseDate AND movPlayDate = i_movPlayDate AND thName = i_thName AND comName = i_comName) AND
+        NOT EXISTS (SELECT 1
         FROM CustomerViewMovie
-        WHERE creditCardNum = i_creditCardNum AND movPlayDate = i_movPlayDate AND movName = i_movName AND i_movReleaseDate = movReleaseDate);
+        WHERE creditCardNum = i_creditCardNum AND movPlayDate = i_movPlayDate AND movName = i_movName AND i_movReleaseDate = movReleaseDate AND thName = i_thName);
 END$$
 DELIMITER ;
 
