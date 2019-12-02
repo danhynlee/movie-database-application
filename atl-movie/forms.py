@@ -119,6 +119,11 @@ class TheaterOverviewForm(FlaskForm):
     notPlayed = BooleanField('Only Include Not Played Movies')
     filter = SubmitField('Filter')
 
+class ScheduleMovieForm(FlaskForm):
+    movReleaseDate = DateField('Release Date', validators=[DataRequired()])
+    movPlayDate = DateField('Play Date', validators=[DataRequired()])
+    add = SubmitField('Add')
+
 class VisitHistoryForm(FlaskForm):
     company = SelectField('Company', choices = [('all','--All--'), ('4400 Theater Company', '4400'), ('AI Theater Company', 'AI'), ('Awesome Theater Company', 'Awesome'), ('EZ Theater Company', 'EZ')], validators=[DataRequired()])
     fromDate = DateField('From')
