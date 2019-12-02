@@ -84,6 +84,7 @@ class ManageCompanyForm(FlaskForm):
     maxEmployeeNum = IntegerField('Max # Employee')
     filter = SubmitField('Filter')
     detail = SubmitField('Company Detail')
+    create = SubmitField('Create Theater')
 
 class CreateTheaterForm(FlaskForm):
     thName = StringField('Name', validators=[DataRequired()])
