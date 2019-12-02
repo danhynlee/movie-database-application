@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="container">
+            <legend class="border-bottom mb-4">Explore Theater</legend>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="thName" class="form-control-label">Theater Name</label>
+                                <select name="thName" class="form-control form-control-md" id="thName" required>
+                                    <option name="thName" value="ALL" selected>--All--</option>
+                                    {% for th in theaters %}
+                                        <option name="thName" value="{{ th['thName'] }}">{{ th['thName'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.company.label(class="form-control-label", style="padding-right:30px") }}
+                                {% if form.company.errors %}
+                                    {{ form.company(class="form-control form-control-md is-invalid") }}
+                                    <div style="color:red">
+                                        {% for error in form.company.errors %}
+                                        <span style="font-size:13px">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.company(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.city.label(class="form-control-label") }}
+                                {% if form.city.errors %}
+                                    {{ form.city(class="form-control form-control-md is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.city.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor%}
+                                    </div>
+                                {% else %}
+                                    {{ form.city(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                {{ form.state.label(class="form-control-label", style="padding-right:30px") }}
+                                {% if form.state.errors %}
+                                    {{ form.state(class="form-control form-control-md is-invalid") }}
+                                    <div style="color:red">
+                                        {% for error in form.state.errors %}
+                                        <span style="font-size:13px">{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.state(class="form-control form-control-md") }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.filter(class="btn btn-outline-info") }}
+                    </div>
+                    <div class="form-group">
+                        <table class="table" data-toggle="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Theater
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col">Address
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                    <th scope="col">Company
+                                        <div class="input-group-append" style="float:right"></div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for th in theaters %}
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="theaterName" value="{{ th['thName'] }}">
+                                            <input type="hidden" name="companyName" value="{{ th['comName'] }}">
+                                            <label for="theaterView" style="padding-left: 10px">{{ th['thName'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="address">{{ th['address'] }}</label>
+                                        </td>
+                                        <td>
+                                            <label for="comName">{{ th['comDisplay'] }}</label>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="form-inline">
+                            <div class="col-lg-4">
+                                <div class="form-group" style="margin-top: 40px">
+                                    {{ form.logvisit(class="btn btn-outline-info mb-3") }}
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-inline"></div>
+                                <div class="form-group">
+                                    {{ form.visitDate.label(class="form-control-label", style="padding-right:30px") }}
+                                    {% if form.visitDate.errors %}
+                                        {{ form.visitDate(class="form-control form-control-md is-invalid") }}
+                                        <div style="color:red">
+                                            {% for error in form.visitDate.errors %}
+                                            <span style="font-size:13px">{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.visitDate(class="form-control form-control-md") }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <a class="btn btn-outline-info" href="{{ url_for('dashboard', userType=userType, username=username) }}">Back</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+{% endblock%}
