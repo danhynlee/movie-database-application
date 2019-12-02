@@ -13,55 +13,58 @@
         <div class="row justify-content-center">
             {% if userType == 'User' %}
                 <div class="list-group col-md-6">
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
+                    <a href="{{ url_for('explore_theater', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
                     <a href="{{ url_for('visit_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
                     <br>
                 </div>
             {% elif userType == 'Customer' %}
                 <div class="list-group col-md-6">
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Movie</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">View History</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
+                    <a href="{{ url_for('explore_movie', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Movie</a>
+                    <a href="{{ url_for('view_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">View History</a>
+                    <a href="{{ url_for('explore_theater', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
+                    <a href="{{ url_for('visit_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
                     <br>
                 </div>
             {% elif userType == 'Manager' %}
                 <div class="list-group col-md-6">
-                    <a href="{{ url_for('theater_overview', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Theater Overview</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Schedule Movie</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
+                    {% if theaterMng %}
+                        <a href="{{ url_for('theater_overview', userType=userType, username=username, theaterMng=theaterMng) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Theater Overview</a>
+                        <a href="{{ url_for('schedule_movie', userType=userType, username=username, theaterMng=theaterMng) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Schedule Movie</a>
+                    {% endif %}
+                    <a href="{{ url_for('explore_theater', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
+                    <a href="{{ url_for('visit_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
                     <br>
                 </div>
             {% elif userType == 'Manager-Customer' %}
                 <div class="list-group col-md-6">
-                    <a href="{{ url_for('theater_overview', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Theater Overview</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Schedule Movie</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Movie</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">View History</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
+                    {% if theaterMng %}
+                        <a href="{{ url_for('theater_overview', userType=userType, username=username, theaterMng=theaterMng) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Theater Overview</a>
+                        <a href="{{ url_for('schedule_movie', userType=userType, username=username, theaterMng=theaterMng) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Schedule Movie</a>
+                    {% endif %}                    
+                    <a href="{{ url_for('explore_movie', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Movie</a>
+                    <a href="{{ url_for('view_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">View History</a>
+                    <a href="{{ url_for('explore_theater', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
+                    <a href="{{ url_for('visit_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
                     <br>
-                </div>
+            </div>
             {% elif userType == 'Admin' %}
                 <div class="list-group col-md-6">
                     <a href="{{ url_for('manage_user', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Manage User</a>
                     <a href="{{ url_for('manage_company', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Manage Company</a>
                     <a href="{{ url_for('create_movie', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Create Movie</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
+                    <a href="{{ url_for('explore_theater', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
+                    <a href="{{ url_for('visit_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
                     <br>
                 </div>
             {% elif userType == 'Admin-Customer' %}
                 <div class="list-group col-md-6">
                     <a href="{{ url_for('manage_user', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Manage User</a>
                     <a href="{{ url_for('manage_company', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Manage Company</a>
-                    <a href="{{ url_for('theater_overview', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Theater Overview</a>
                     <a href="{{ url_for('create_movie', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Create Movie</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Movie</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">View History</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
-                    <a href="#" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
+                    <a href="{{ url_for('explore_movie', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Movie</a>
+                    <a href="{{ url_for('view_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">View History</a>
+                    <a href="{{ url_for('explore_theater', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Explore Theater</a>
+                    <a href="{{ url_for('visit_history', userType=userType, username=username) }}" class="list-group-item list-group-item-action list-group-item-dark text-center" style="font-size:20px">Visit History</a>
                     <br>
                 </div>
             {% endif %}
