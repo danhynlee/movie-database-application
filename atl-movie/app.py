@@ -486,10 +486,16 @@ def company_detail(target_company):
 
     return render_template("company_detail.html", title="Company Detail", userType=request.args.get('userType'), username=request.args.get('username'), company=target_company, employees=employees, theaters=theaters)
 
-@app.route('/create_theater', methods=['GET', 'POST'])
-def create_theater():
+@app.route('/create_theater/<string:target_company>', methods=['GET', 'POST'])
+def create_theater(target_company):
     form = CreateTheaterForm()
-    managers = all_managers()
+    cur = mysql.connection.cursor()
+
+    cur.execute("CALL admin_view_comDetail_emp(%s)", (target_company,))
+    cur.execute("SELECT username, firstname, lastname FROM User WHERE username in (SELECT manUsername FROM Theater WHERE manUsername NOT IN (SELECT username FROM User WHERE (firstname, lastname) IN (SELECT * FROM AdComDetailEmp)))")
+    managers = cur.fetchall()
+    for manager in managers:
+        manager['name'] = f"{manager['firstname']} {manager['lastname']}"
 
     if form.validate_on_submit() and request.method == 'POST':
         thName = form.thName.data
@@ -508,7 +514,6 @@ def create_theater():
                 manuser = manuser.replace(x, "") 
         flash(f'{manuser}', 'success')
 
-        cur = mysql.connection.cursor()
 
         cur.execute("INSERT INTO Theater(thName, comName, thStreet, thCity, thState, thZipcode, capacity, manUsername) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", (thName, company, street_address, city, state, zipcode, capacity, manuser))
 
