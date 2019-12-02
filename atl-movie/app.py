@@ -557,7 +557,8 @@ def create_movie():
 def theater_overview():
     form = TheaterOverviewForm()
 
-    movies = all_movies()
+    theater = request.args['theaterMng']
+    movies = all_movies(theater)
 
     cur = mysql.connection.cursor()
 
