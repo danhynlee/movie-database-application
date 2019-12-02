@@ -248,7 +248,48 @@ def dashboard():
     username = request.args['username']
     userType = request.args['userType']
 
-    if userType == 'Customer' or userType == 'Manager-Customer' or userType == 'Admin-Customer':
+    if userType == 'Manager' or userType == 'Manager-Customer':
+        cur = mysql.connection.cursor()
+
+        cur.execute("SELECT COUNT(*) FROM Theater WHERE manUsername=%s", (username,))
+        managed = cur.fetchone()['COUNT(*)']
+
+        if managed == 1:
+            cur.execute("SELECT thName FROM Theater WHERE manUsername=%s", (username,))
+            theaterMng = cur.fetchone()['thName']
+        else:
+            theaterMng = None
+        
+        if userType == 'Manager-Customer':
+            creditCards = []
+            if form.validate_on_submit():
+                if form.addCC.data:
+                    credit_card = form.credit_card.data
+
+                    cur.execute("INSERT INTO CustomerCreditCard(creditCardNum, username) VALUES(%s, %s)", (credit_card, username))
+
+                    mysql.connection.commit()
+
+                    cur.close()
+
+                return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username, creditCards=creditCards, theaterMng=theaterMng))
+
+            cur.execute("SELECT creditCardNum FROM CustomerCreditCard WHERE username=%s", (username,))
+            credit_cards = cur.fetchall()
+            creditCards = [dictCC['creditCardNum'] for dictCC in credit_cards]
+
+            mysql.connection.commit()
+
+            cur.close()
+
+            return render_template('dashboard.html', title='Dashboard', userType=request.args.get('userType'), username=username, form=form, creditCards=creditCards, theaterMng=theaterMng)
+
+
+        return render_template('dashboard.html', title='Dashboard', userType=request.args.get('userType'), username=username, form=form, creditCards=None, theaterMng=theaterMng)
+
+
+
+    if userType == 'Customer' or userType == 'Admin-Customer':
         creditCards = []
 
         cur = mysql.connection.cursor()
@@ -263,7 +304,7 @@ def dashboard():
 
                 cur.close()
 
-            return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username))
+            return redirect(url_for('dashboard', userType=request.args.get('userType'), username=username, creditCards=creditCards))
 
         cur.execute("SELECT creditCardNum FROM CustomerCreditCard WHERE username=%s", (username,))
         credit_cards = cur.fetchall()
