@@ -355,7 +355,7 @@ DROP PROCEDURE IF EXISTS user_visit_th;
 DELIMITER $$
 CREATE definer = `root`@`localhost` PROCEDURE `user_visit_th`(IN i_thName VARCHAR(50), IN i_comName VARCHAR(50), IN i_visitDate DATE, IN i_username VARCHAR(50))
 BEGIN
-    INSERT INTO VisitUserTheater (thName, comName, visitDate, username)
+    INSERT INTO UserVisitTheater (thName, comName, visitDate, username)
     VALUES (i_thName, i_comName, i_visitDate, i_username);
 END$$
 DELIMITER ;
