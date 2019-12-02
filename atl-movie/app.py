@@ -732,6 +732,74 @@ def schedule_movie():
     return render_template("schedule_movie.html", title="Schedule Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movies)
 
 @app.route('/explore_movie', methods=['GET', 'POST'])
+def explore_movie():
+    form = ExploreMovieForm()
+    username = request.args['username']
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("CALL customer_filter_mov('ALL', 'ALL', '', 'ALL', NULL, NULL)")
+    cur.execute("SELECT * FROM CosFilterMovie")
+    movieDetails = cur.fetchall()
+    for movie in movieDetails:
+        movie['address'] = f"{movie['thStreet']}, {movie['thCity']}, {movie['thState']} {movie['thZipcode']}"
+        movie['comDisplay'] = movie['comName'].replace(" Theater Company", "")
+
+
+    cur.execute("SELECT * FROM CustomerCreditCard WHERE username=%s", (username,))
+    ccDetails = cur.fetchall()
+
+    if form.filter.data:
+        movName = request.form.get('movName')
+        company = form.company.data
+        city = '' if not form.city.data else form.city.data
+        state = form.state.data
+        movPlayDateStart = form.movPlayDateStart.data
+        movPlayDateEnd = form.movPlayDateEnd.data
+
+        filtered = [] 
+        cur.execute("CALL customer_filter_mov(%s, %s, %s, %s, %s, %s)", (movName, company, city, state, movPlayDateStart, movPlayDateEnd))
+        cur.execute("SELECT * FROM CosFilterMovie")
+        filtered = cur.fetchall()
+        for movie in filtered:
+            movie['address'] = f"{movie['thStreet']}, {movie['thCity']}, {movie['thState']} {movie['thZipcode']}"
+            movie['comDisplay'] = movie['comName'].replace(" Theater Company", "")
+        
+        mysql.connection.commit()
+
+        cur.close()
+        return render_template("explore_movie.html", title="Explore Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=filtered, creditCards=ccDetails)
+
+    elif form.view.data:
+
+        ccNum = request.form.get('creditCardNum')
+        # movieView = request.form.get('movieView')
+        # movieView = movieView.replace("[", "")
+        # movieView = movieView.replace("]", "")
+        # movieView = movieView.split(", Undefined,")
+
+        name = request.form.get('namemovie')
+        release = request.form.get('release')
+        theater = request.form.get('theater')
+        co = request.form.get('company')
+        play = request.form.get('play')
+
+        # name = movieView[0].replace("'","")
+        # release = movieView[1].replace("'","")
+        # release = re.sub("\D", "", release)
+        # release = datetime.datetime.strptime(release, "%Y%m%d").date()
+        # flash(f'{type(release)}', 'success')
+        # theater = movieView[2].replace("'","")
+        # co = movieView[3].replace("'","")
+        # play = movieView[4].replace("'","")
+        # play = re.sub("\D", "", play)
+        # play = datetime.datetime.strptime(play, "%Y%m%d").date()
+
+        cur.execute("CALL customer_view_mov(%s, %s, %s, %s, %s, %s)", (ccNum, name, release, theater, co, play))
+
+        return redirect(url_for('explore_movie', title="Explore Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movieDetails, creditCards=ccDetails))
+
+    return render_template("explore_movie.html", title="Explore Movie", userType=request.args.get('userType'), username=request.args.get('username'), form=form, movies=movieDetails, creditCards=ccDetails)
 @app.route('/visit_history', methods=['GET', 'POST'])
 def visit_history():
     form = VisitHistoryForm()
